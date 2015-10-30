@@ -1,6 +1,12 @@
 {
     "name": "alfredoem/ragnarok",
     "description": "Authentication, Roles and Menus for a specific bussines logic",
+    "keywords": [
+        "alfredoem",
+        "laravel",
+        "packages"
+    ],
+    "homepage": "https://github.com/alfredoem/ragnarok",
     "license": "MIT",
     "authors": [
         {
@@ -9,7 +15,7 @@
         }
     ],
     "require": {
-        "illuminate/support": "~5.1.*",
+        "illuminate/support": "~5.1",
         "php": ">=5.3"
     },
     "autoload": {
