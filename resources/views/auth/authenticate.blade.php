@@ -1,7 +1,7 @@
 @extends('Ragnarok::layouts.auth')
 
 @section('style')
-    <link rel="stylesheet" href="{{asset('css/alfredoem/authentication/authenticate.css')}}"/>
+    <link rel="stylesheet" href="{{asset('css/alfredoem/ragnarok/authenticate.css')}}"/>
 @endsection
 
 <!-- Main Content -->
