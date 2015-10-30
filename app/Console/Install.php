@@ -28,7 +28,7 @@ class Install extends Command
 
         // here copy migrations
         $this->comment('**********************************************');
-        $this->comment('**************Ragnarok******************');
+        $this->comment('****************Ragnarok**********************');
         $this->comment('**********************************************');
         $this->comment('');
         if ($this->option('force') || $this->confirm('Would you like to run your database migrations?', 'yes')) {
@@ -42,8 +42,8 @@ class Install extends Command
     protected function InstallMigrations()
     {
         copy(
-            AUTH_PATH . '/resources/stubs/database/migrations/2015_09_25_191344_create_secusers_table.php',
-            database_path('migrations/' . date('Y_m_d_His') .'_create_secusers_table.php')
+            RAGNAROK . '/resources/stubs/database/migrations/2015_09_25_191344_create_security_tables.php',
+            database_path('migrations/' . date('Y_m_d_His') .'_create_security_tables_tables.php')
         );
     }
 
@@ -73,7 +73,7 @@ class Install extends Command
     protected function installMiddleware()
     {
         copy(
-            AUTH_PATH . '/resources/stubs/app/Http/Middleware/Authenticate.php',
+            RAGNAROK . '/resources/stubs/app/Http/Middleware/Authenticate.php',
             app_path('Http/Middleware/Authenticate.php')
         );
     }

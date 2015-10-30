@@ -52,7 +52,7 @@ class RagnarokServiceProvider extends ServiceProvider
     public function defineAssets()
     {
         $this->publishes([
-            AUTH_PATH.'/public/css' => public_path('css/alfredoem/ragnarok/'),
+            RAGNAROK.'/public/css' => public_path('css/alfredoem/ragnarok/'),
         ], 'public');
     }
 
