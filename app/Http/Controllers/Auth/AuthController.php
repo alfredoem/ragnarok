@@ -30,12 +30,14 @@ class AuthController extends Controller
     public function postLogin(Request $request)
     {
         $this->validate($request, [
-            'email' => $request->email,
-            'password' => $request->password
+            'email' => 'required',
+            'password' => 'required'
         ]);
 
         $service = new RagnarokService;
         $login = $service->login($request->email, $request->password);
+
+        dd($login);
 
     }
 
