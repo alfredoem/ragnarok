@@ -39,6 +39,14 @@ class Install extends Command
         $this->displayPostInstallationNotes();
     }
 
+    protected function installKernel()
+    {
+        copy(
+            RAGNAROK . '/resources/stubs/app/Http/Kernel.php',
+            app_path('Http/Kernel.php')
+        );
+    }
+
     protected function InstallMigrations()
     {
         copy(
@@ -75,6 +83,11 @@ class Install extends Command
         copy(
             RAGNAROK . '/resources/stubs/app/Http/Middleware/Authenticate.php',
             app_path('Http/Middleware/Authenticate.php')
+        );
+
+        copy(
+            RAGNAROK . '/resources/stubs/app/Http/Middleware/RagnarokApiGuard.php',
+            app_path('Http/Middleware/RagnarokApiGuard.php')
         );
     }
 

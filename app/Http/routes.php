@@ -10,6 +10,6 @@ Route::get('logout', 'Auth\AuthController@getLogout');
 Route::get('register', 'Auth\AuthController@getRegister');
 Route::post('register', 'Auth\AuthController@postRegister');
 
-Route::group(['prefix' => 'ragnarok/api/v1'], function(){
+Route::group(['prefix' => 'ragnarok/api/v1', 'middleware' => 'api_guard'], function(){
     Route::controller('/', 'RagnarokApi\v1\RagnarokApiController');
 });
