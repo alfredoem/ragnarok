@@ -1,5 +1,7 @@
 <?php namespace Alfredoem\Ragnarok;
 
+use Alfredoem\Ragnarok\Utilities\EncryptAes;
+
 class RagnarokService
 {
 
@@ -30,24 +32,16 @@ class RagnarokService
         curl_setopt($curl, CURLOPT_SSL_VERIFYPEER, false);//    Retirar en HTTPS
         curl_setopt($curl, CURLOPT_URL, $url);
         $response = curl_exec($curl);
+
         if( curl_errno($curl) ){
             $json = json_encode(array('Success'=> false,'msg' => curl_error($curl)));
         }else{
             $json = EncryptAes::dencrypt($response);
         }
-        //dd($json);
+
         curl_close($curl);
-
-        try {
-            $this->logWebServiceRequest($url, '', '', $data, $json);
-        } catch (QueryException $e) {
-
-        }
 
         return $json;
     }
-
-
-
 
 }

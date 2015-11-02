@@ -1,6 +1,6 @@
-<?php namespace Alfredoem\Ragnarok\Http\Controllers\Auth;
+<?php namespace Alfredoem\Ragnarok\Http\Controllers\RagnarokApi\v1;
 
-use Alfredoem\Authentication\SecUser as User;
+use Alfredoem\Ragnarok\SecUser as User;
 use Illuminate\Support\Facades\Validator;
 use App\Http\Controllers\Controller;
 use Illuminate\Foundation\Auth\ThrottlesLogins;
@@ -8,8 +8,9 @@ use Illuminate\Foundation\Auth\AuthenticatesAndRegistersUsers;
 use Illuminate\Http\Request;
 
 use Alfredoem\Ragnarok\Api\v1\RagnarokApi;
+use Alfredoem\Ragnarok\Utilities\EncryptAes;
 
-class AuthController extends Controller
+class RagnarokApiController extends Controller
 {
     use AuthenticatesAndRegistersUsers, ThrottlesLogins;
 
@@ -37,7 +38,7 @@ class AuthController extends Controller
             EncryptAes::dencrypt($input['data'])
         );
 
-        return $this->api->login($data->email, $data->password);
+        return EncryptAes::encrypt(json_encode($this->api->login($data->email, $data->password)));
     }
 
     protected function validator(array $data)
