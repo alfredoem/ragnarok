@@ -7,7 +7,7 @@ use Illuminate\Foundation\Auth\ThrottlesLogins;
 use Illuminate\Foundation\Auth\AuthenticatesAndRegistersUsers;
 use Illuminate\Http\Request;
 
-use Alfredoem\Ragnarok\RagnarokService;
+use Alfredoem\Ragnarok\Api\v1\RagnarokApi;
 
 class AuthController extends Controller
 {
@@ -17,8 +17,11 @@ class AuthController extends Controller
     protected $redirectPath = '/';
     protected $redirectAfterLogout = '/login';
 
-    public function __construct()
+    protected $api;
+
+    public function __construct(RagnarokApi $api)
     {
+        $this->api = $api;
         $this->middleware('guest', ['except' => 'getLogout']);
     }
 
@@ -29,14 +32,12 @@ class AuthController extends Controller
 
     public function postLogin(Request $request)
     {
-        $this->validate($request, [
-            'email' => $request->email,
-            'password' => $request->password
-        ]);
+        $input = $request->all();
+        $data = json_decode(
+            EncryptAes::dencrypt($input['data'])
+        );
 
-        $service = new RagnarokService;
-        $login = $service->login($request->email, $request->password);
-
+        return $this->api->login($data->email, $data->password);
     }
 
     protected function validator(array $data)
