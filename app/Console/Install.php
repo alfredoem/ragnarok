@@ -22,6 +22,7 @@ class Install extends Command
 
     public function handle()
     {
+        $this->installKernel();
         $this->installMigrations();
         $this->installMiddleware();
         $this->updateAuthConfig();
@@ -85,6 +86,11 @@ class Install extends Command
             app_path('Http/Middleware/Authenticate.php')
         );
 
+        copy(
+            RAGNAROK . '/resources/stubs/app/Http/Middleware/RedirectIfAuthenticated.php',
+            app_path('Http/Middleware/RedirectIfAuthenticated.php')
+        );
+        
         copy(
             RAGNAROK . '/resources/stubs/app/Http/Middleware/RagnarokApiGuard.php',
             app_path('Http/Middleware/RagnarokApiGuard.php')

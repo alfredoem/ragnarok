@@ -1,13 +1,14 @@
 <?php namespace Alfredoem\Ragnarok\Http\Controllers\Auth;
 
-use Alfredoem\Authentication\SecUser as User;
-use Illuminate\Support\Facades\Validator;
 use App\Http\Controllers\Controller;
 use Illuminate\Foundation\Auth\ThrottlesLogins;
 use Illuminate\Foundation\Auth\AuthenticatesAndRegistersUsers;
 use Illuminate\Http\Request;
 
 use Alfredoem\Ragnarok\RagnarokService;
+
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Auth\GenericUser;
 
 class AuthController extends Controller
 {
@@ -35,35 +36,43 @@ class AuthController extends Controller
         ]);
 
         $service = new RagnarokService;
-        $login = $service->login($request->email, $request->password);
+        $login = $service->login($request->all());
 
-        dd($login);
+        $throttles = $this->isUsingThrottlesLoginsTrait();
 
+        if ($throttles && $this->hasTooManyLoginAttempts($request)) {
+            return $this->sendLockoutResponse($request);
+        }
+
+        if ($login->status) {
+            $this->AuthUser($login->user);
+            return $this->handleUserWasAuthenticated($request, $throttles);
+        }
+
+        if ($throttles) {
+            $this->incrementLoginAttempts($request);
+        }
+
+        return redirect($this->loginPath())
+            ->withInput($request->only($this->loginUsername(), 'remember'))
+            ->withErrors([
+                $this->loginUsername() => $this->getFailedLoginMessage(),
+            ]);
     }
 
-    protected function validator(array $data)
+    public function AuthUser($data)
     {
-        return Validator::make($data, [
-            'firstName' => 'required|max:255',
-            'lastName' => 'required|max:255',
-            'email' => 'required|email|max:255|unique:SecUsers',
-            'password' => 'required|confirmed|min:6',
-        ]);
-    }
+        $user = [
+            'id' => $data->userId,
+            'email' => $data->email,
+            'firstName' => $data->firstName,
+            'lastName'  => $data->lastName,
+            'status'    => $data->status,
+            'remember_token' => $data->remember_token
+        ];
 
-    public function getRegister()
-    {
-        return view('Ragnarok::auth.register');
-    }
-
-    protected function create(array $data)
-    {
-        return User::create([
-            'firstName' => $data['firstName'],
-            'lastName' => $data['lastName'],
-            'email' => $data['email'],
-            'password' => bcrypt($data['password']),
-        ]);
+        $user = new GenericUser($user);
+        Auth::login($user, true);
     }
 
 }

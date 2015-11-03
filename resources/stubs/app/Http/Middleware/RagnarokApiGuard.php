@@ -3,8 +3,8 @@
 //use App\Generals\ParamsDB;
 use Closure;
 
-class RagnarokApiGuard {
-
+class RagnarokApiGuard
+{
     /**
      * Handle an incoming request.
      *
@@ -23,6 +23,7 @@ class RagnarokApiGuard {
         if( ! \Hash::check($userKey, $key->Value) ){
             return json_encode(['success'=>'false', 'msg'=>'Process Rejected']);
         }*/
+
         return $next($request);
     }
 }

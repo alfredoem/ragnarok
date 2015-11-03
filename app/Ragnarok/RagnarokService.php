@@ -2,19 +2,20 @@
 
 use Alfredoem\Ragnarok\Utilities\EncryptAes;
 
+
 class RagnarokService
 {
 
-    public function login($email, $password)
+    public function login($data)
     {
-        $data = json_encode([
-            'email'  =>  $email,
-            'password'  =>  $password
-        ]);
+        if (! isset($data['remember'])) {
+            $data['remember'] = false;
+        }
 
+        $data = json_encode(['email'  =>  $data['email'], 'password'  =>  $data['password'], 'remember'  =>  $data['remember']]);
         $url = 'http://local.ragnarok.com/ragnarok/api/v1/login';
 
-        return $this->executeCURL($data, $url);
+        return json_decode($this->executeCURL($data, $url));
     }
 
     private function executeCURL($data, $url)
@@ -34,7 +35,7 @@ class RagnarokService
         $response = curl_exec($curl);
 
         if( curl_errno($curl) ){
-            $json = json_encode(array('Success'=> false,'msg' => curl_error($curl)));
+            $json = json_encode(array('Success'=> false,'Msg' => curl_error($curl)));
         }else{
             $json = EncryptAes::dencrypt($response);
         }
