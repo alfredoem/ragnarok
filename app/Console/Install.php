@@ -26,12 +26,14 @@ class Install extends Command
         $this->installMigrations();
         $this->installMiddleware();
         $this->updateAuthConfig();
+        $this->installRoutes();
 
         // here copy migrations
         $this->comment('**********************************************');
         $this->comment('****************Ragnarok**********************');
         $this->comment('**********************************************');
         $this->comment('');
+
         if ($this->option('force') || $this->confirm('Would you like to run your database migrations?', 'yes')) {
             (new Process('php artisan migrate', base_path()))->setTimeout(null)->run();
         }
@@ -90,10 +92,18 @@ class Install extends Command
             RAGNAROK . '/resources/stubs/app/Http/Middleware/RedirectIfAuthenticated.php',
             app_path('Http/Middleware/RedirectIfAuthenticated.php')
         );
-        
+
         copy(
             RAGNAROK . '/resources/stubs/app/Http/Middleware/RagnarokApiGuard.php',
             app_path('Http/Middleware/RagnarokApiGuard.php')
+        );
+    }
+
+    public function installRoutes()
+    {
+        copy(
+            RAGNAROK . '/resources/stubs/app/Http/routes.php',
+            app_path('Http/routes.php')
         );
     }
 
