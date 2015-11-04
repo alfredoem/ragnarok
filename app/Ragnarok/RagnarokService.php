@@ -1,12 +1,12 @@
 <?php namespace Alfredoem\Ragnarok;
 
 use Alfredoem\Ragnarok\Utilities\EncryptAes;
-
 use Alfredoem\Ragnarok\SecParameters\SecParameter;
+use Alfredoem\Ragnarok\Api\v1\RagnarokApi;
+use Alfredoem\Ragnarok\Utilities\Make;
 
 class RagnarokService
 {
-
     const API_SECURITY_URL = 1;
 
     public function login($data)
@@ -15,10 +15,19 @@ class RagnarokService
             $data['remember'] = false;
         }
 
-        $data = json_encode(['email'  =>  $data['email'], 'password'  =>  $data['password'], 'remember'  =>  $data['remember']]);
+        $dataJson = json_encode(['email'  =>  $data['email'], 'password'  =>  $data['password'], 'remember'  =>  $data['remember']]);
         $url =  SecParameter::find(self::API_SECURITY_URL)->value . '/login';
-        return json_decode($this->executeCURL($data, $url));
+        $response = json_decode($this->executeCURL($dataJson, $url));
+
+
+        if($response->Success === false) {
+            $api = new RagnarokApi;
+            $response = Make::arrayToObject($api->login($data['email'], $data['password'], $data['remember']));
+        }
+
+        return $response;
     }
+
 
     private function executeCURL($data, $url)
     {
