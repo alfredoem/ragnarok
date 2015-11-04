@@ -2,9 +2,12 @@
 
 use Alfredoem\Ragnarok\Utilities\EncryptAes;
 
+use Alfredoem\Ragnarok\SecParameters\SecParameter;
 
 class RagnarokService
 {
+
+    const API_SECURITY_URL = 1;
 
     public function login($data)
     {
@@ -13,8 +16,7 @@ class RagnarokService
         }
 
         $data = json_encode(['email'  =>  $data['email'], 'password'  =>  $data['password'], 'remember'  =>  $data['remember']]);
-        $url = 'http://local.ragnarok.com/ragnarok/api/v1/login';
-
+        $url =  SecParameter::find(self::API_SECURITY_URL)->value . '/login';
         return json_decode($this->executeCURL($data, $url));
     }
 
