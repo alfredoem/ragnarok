@@ -23,9 +23,9 @@ class CreateSecurityTables extends Migration
             $table->string('name', 50);
             $table->string('description');
             $table->string('value');
-            $table->integer('userIns', 10);
+            $table->integer('userIns');
             $table->dateTime('datetimeIns');
-            $table->integer('userUpd', 10);
+            $table->integer('userUpd');
             $table->dateTime('datetimeUpd');
             $table->rememberToken();
         });
