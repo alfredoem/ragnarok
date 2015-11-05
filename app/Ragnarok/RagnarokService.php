@@ -17,34 +17,25 @@ class RagnarokService
             $data['remember'] = false;
         }
 
-        if(self::checkConnection())
-        {
-            $api = new RagnarokApi;
-            return Make::arrayToObject($api->login($data['email'], $data['password'], $data['remember']));
-        }
-
-        return false;
+        $api = new RagnarokApi;
+        return Make::arrayToObject($api->login($data['email'], $data['password'], $data['remember']));
     }
 
     public static function checkConnection()
     {
-        $domain = SecParameter::find(self::API_SECURITY_URL)->value;
+        $domain = SecParameter::find(self::SERVER_SECURITY_URL)->value;
         //check, if a valid url is provided
         if(!filter_var($domain, FILTER_VALIDATE_URL))
         {
             return false;
         }
 
-        $curlInit = curl_init($domain);
-        curl_setopt($curlInit,CURLOPT_CONNECTTIMEOUT,10);
-        curl_setopt($curlInit,CURLOPT_HEADER,true);
-        curl_setopt($curlInit,CURLOPT_NOBODY,true);
-        curl_setopt($curlInit,CURLOPT_RETURNTRANSFER,true);
-
-        $response = curl_exec($curlInit);
-        curl_close($curlInit);
-
-        return ($response) ? true : false;
+        $handle = curl_init($domain);
+        curl_setopt($handle,  CURLOPT_RETURNTRANSFER, TRUE);
+        $response = curl_exec($handle);
+        $httpCode = curl_getinfo($handle, CURLINFO_HTTP_CODE);
+        curl_close($handle);
+        return ($httpCode != 302) ? false : true;
     }
 
 

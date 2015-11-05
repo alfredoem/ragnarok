@@ -17,6 +17,11 @@ class RagnarokApiController extends Controller
         $this->api = $api;
     }
 
+    public function getIndex()
+    {
+        return "=)";
+    }
+
     public function postLogin(Request $request)
     {
         $input = $request->all();
