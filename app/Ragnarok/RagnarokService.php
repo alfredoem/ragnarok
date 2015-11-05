@@ -11,6 +11,7 @@ class RagnarokService
 
     public function login($data)
     {
+
         if (! isset($data['remember'])) {
             $data['remember'] = false;
         }
@@ -19,13 +20,33 @@ class RagnarokService
         $url =  SecParameter::find(self::API_SECURITY_URL)->value . '/login';
         $response = json_decode($this->executeCURL($dataJson, $url));
 
-
-        if($response->Success === false) {
+        if(! self::checkConnection() && $response->status == false) {
             $api = new RagnarokApi;
             $response = Make::arrayToObject($api->login($data['email'], $data['password'], $data['remember']));
         }
 
-        return $response;
+        return $response->response;
+    }
+
+    public static function checkConnection()
+    {
+        $domain = SecParameter::find(self::API_SECURITY_URL)->value;
+        //check, if a valid url is provided
+        if(!filter_var($domain, FILTER_VALIDATE_URL))
+        {
+            return false;
+        }
+
+        $curlInit = curl_init($domain);
+        curl_setopt($curlInit,CURLOPT_CONNECTTIMEOUT,10);
+        curl_setopt($curlInit,CURLOPT_HEADER,true);
+        curl_setopt($curlInit,CURLOPT_NOBODY,true);
+        curl_setopt($curlInit,CURLOPT_RETURNTRANSFER,true);
+
+        $response = curl_exec($curlInit);
+        curl_close($curlInit);
+
+        return ($response) ? true : false;
     }
 
 
@@ -44,11 +65,14 @@ class RagnarokService
         curl_setopt($curl, CURLOPT_SSL_VERIFYPEER, false);//    Retirar en HTTPS
         curl_setopt($curl, CURLOPT_URL, $url);
         $response = curl_exec($curl);
+        $http_status = curl_getinfo($curl, CURLINFO_HTTP_CODE);
+
 
         if( curl_errno($curl) ){
-            $json = json_encode(array('Success'=> false,'Msg' => curl_error($curl)));
+            $json = json_encode(array('status'=> false, 'statusCode' => $http_status, 'statusText' => curl_error($curl)));
         }else{
-            $json = EncryptAes::dencrypt($response);
+            $res = EncryptAes::dencrypt($response);
+            $json = json_encode(['status'=> true, 'statusCode' => $http_status, 'statusText' => curl_error($curl), 'response' => json_decode($res)]);
         }
 
         curl_close($curl);
