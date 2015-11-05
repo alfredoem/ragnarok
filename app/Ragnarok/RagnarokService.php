@@ -8,24 +8,22 @@ use Alfredoem\Ragnarok\Utilities\Make;
 class RagnarokService
 {
     const API_SECURITY_URL = 1;
+    const SERVER_SECURITY_URL = 2;
 
     public function login($data)
     {
-
-        if (! isset($data['remember'])) {
+        if(! isset($data['remember']))
+        {
             $data['remember'] = false;
         }
 
-        $dataJson = json_encode(['email'  =>  $data['email'], 'password'  =>  $data['password'], 'remember'  =>  $data['remember']]);
-        $url =  SecParameter::find(self::API_SECURITY_URL)->value . '/login';
-        $response = json_decode($this->executeCURL($dataJson, $url));
-
-        if(! self::checkConnection() && $response->status == false) {
+        if(self::checkConnection())
+        {
             $api = new RagnarokApi;
-            $response = Make::arrayToObject($api->login($data['email'], $data['password'], $data['remember']));
+            return Make::arrayToObject($api->login($data['email'], $data['password'], $data['remember']));
         }
 
-        return $response->response;
+        return false;
     }
 
     public static function checkConnection()
@@ -66,7 +64,6 @@ class RagnarokService
         curl_setopt($curl, CURLOPT_URL, $url);
         $response = curl_exec($curl);
         $http_status = curl_getinfo($curl, CURLINFO_HTTP_CODE);
-
 
         if( curl_errno($curl) ){
             $json = json_encode(array('status'=> false, 'statusCode' => $http_status, 'statusText' => curl_error($curl)));

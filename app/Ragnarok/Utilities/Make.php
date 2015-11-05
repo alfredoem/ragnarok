@@ -1,4 +1,4 @@
-<?php namespace Alfredoem\Ragnarok\Utilities\Make;
+<?php namespace Alfredoem\Ragnarok\Utilities;
 
 class Make
 {

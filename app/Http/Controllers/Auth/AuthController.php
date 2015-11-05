@@ -10,6 +10,8 @@ use Alfredoem\Ragnarok\RagnarokService;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Auth\GenericUser;
 
+use Alfredoem\Ragnarok\SecParameters\SecParameter;
+
 class AuthController extends Controller
 {
     use AuthenticatesAndRegistersUsers, ThrottlesLogins;
@@ -25,6 +27,13 @@ class AuthController extends Controller
 
     public function getLogin()
     {
+        $serverUrl =  SecParameter::find(RagnarokService::SERVER_SECURITY_URL)->value;
+
+        if (RagnarokService::checkConnection() && $serverUrl != url('/'))
+        {
+            return redirect()->to($serverUrl);
+        }
+
         return view('Ragnarok::auth.authenticate');
     }
 
@@ -36,6 +45,7 @@ class AuthController extends Controller
         ]);
 
         $service = new RagnarokService;
+
         $login = $service->login($request->all());
 
         $throttles = $this->isUsingThrottlesLoginsTrait();
@@ -44,7 +54,7 @@ class AuthController extends Controller
             return $this->sendLockoutResponse($request);
         }
 
-        if ($login->status) {
+        if ($login->success) {
             $this->AuthUser($login->user);
             return $this->handleUserWasAuthenticated($request, $throttles);
         }
