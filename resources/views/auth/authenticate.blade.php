@@ -7,7 +7,7 @@
 <!-- Main Content -->
 @section('content')
 <div class="container">
-    <form class="form-signin" role="form" method="POST" action="{{ url('/login') }}">
+    <form class="form-signin" role="form" method="POST" action="{{ url('/auth/login') }}">
         {!! csrf_field() !!}
         <h2 class="form-signin-heading">Please sign in</h2>
         @include('Ragnarok::common.errors', ['form' => 'default'])
