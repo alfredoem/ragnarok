@@ -34,7 +34,7 @@ class Install extends Command
         $this->comment('**********************************************');
         $this->comment('');
 
-        if ($this->option('force') || $this->confirm('Would you like to run your database migrations?', 'yes')) {
+        if ($this->option('force') || $this->confirm('Would you like to run your database migrations (make sure you have a database created)?', 'yes')) {
             (new Process('php artisan migrate', base_path()))->setTimeout(null)->run();
         }
 
