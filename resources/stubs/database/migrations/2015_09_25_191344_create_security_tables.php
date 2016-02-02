@@ -34,13 +34,15 @@ class CreateSecurityTables extends Migration
         DB::table('SecParameters')->insert([
             'name' => 'API_SECURITY_URL',
             'description' => 'URL del api servidor de seguridad',
-            'value'       => 'http://local.ragnarok.security.com/ragnarok/api/v1'
+            //'value'       => 'http://local.ragnarok.security.com/ragnarok/api/v1'
+            'value'       => 'http://172.16.11.237/ragnarok/public/api/v1'
         ]);
 
         DB::table('SecParameters')->insert([
             'name' => 'SERVER_SECURITY_URL',
             'description' => 'URL del servidor de seguridad',
-            'value'       => 'http://local.ragnarok.security.com'
+            //'value'       => 'http://local.ragnarok.security.com'
+            'value'       => 'http://172.16.11.237/ragnarok/public'
         ]);
     }
 
