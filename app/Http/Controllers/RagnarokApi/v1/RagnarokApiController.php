@@ -7,9 +7,6 @@ use Alfredoem\Ragnarok\Utilities\EncryptAes;
 
 class RagnarokApiController extends Controller
 {
-    protected $loginPath = '/login';
-    protected $redirectPath = '/';
-    protected $redirectAfterLogout = '/login';
     protected $api;
 
     public function __construct(RagnarokApi $api)

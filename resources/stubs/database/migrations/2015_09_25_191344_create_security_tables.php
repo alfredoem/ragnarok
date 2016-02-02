@@ -14,6 +14,7 @@ class CreateSecurityTables extends Migration
     {
         $this->secUsers();
         $this->secParameters();
+        $this->secApps();
     }
 
     public function secParameters()
@@ -66,6 +67,19 @@ class CreateSecurityTables extends Migration
         ]);
     }
 
+    public function secApps()
+    {
+        \Schema::create('SecApps', function(Blueprint $table){
+            $table->increments('appId');
+            $table->string('name', 100);
+            $table->text('description');
+            $table->tinyInteger('type');
+            $table->string('logo', '250');
+            $table->string('url', '250');
+            $table->tinyInteger('status')->unsigned();
+        });
+    }
+
     /**
      * Reverse the migrations.
      *
@@ -75,5 +89,6 @@ class CreateSecurityTables extends Migration
     {
         Schema::drop('SecUsers');
         Schema::drop('SecParameters');
+        Schema::drop('SecApps');
     }
 }
