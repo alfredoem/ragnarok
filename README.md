@@ -3,7 +3,7 @@ Authentication, Roles (coming soon) and Menus (coming soon) for a specific bussi
 
 ## Installation
 
-1. Require this package in your composer.json and run composer update (or run `composer require alfredoem/ragnarok` directly):
+1. Require this package in your composer.json and run composer update (or run `composer require alfredoem/ragnarok` directly, if you want get the last release add dev-master):
 
 		"alfredoem/ragnarok": "^0.2.0"
 		
