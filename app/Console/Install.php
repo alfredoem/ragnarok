@@ -1,7 +1,7 @@
 <?php namespace Alfredoem\Ragnarok\Console;
 
 use Illuminate\Console\Command;
-use Illuminate\Filesystem\Filesystem;
+use Illuminate\Support\Facades\File;
 use Symfony\Component\Process\Process;
 
 class Install extends Command
@@ -52,9 +52,16 @@ class Install extends Command
 
     protected function InstallMigrations()
     {
+        $fileName = '2016_01_01_create_security_tables.php';
+
+        if(File::exists(base_path() . 'database/migrations/'. $fileName)) {
+            File::delete(base_path() . 'database/migrations/'. $fileName);
+        }
+
         copy(
             RAGNAROK . '/resources/stubs/database/migrations/2015_09_25_191344_create_security_tables.php',
-            database_path('migrations/' . date('Y_m_d_His') .'_create_security_tables.php')
+            //database_path('migrations/' . date('Y_m_d_His') .'_create_security_tables.php')
+            database_path('migrations/' . $fileName)
         );
     }
 
@@ -110,7 +117,7 @@ class Install extends Command
     protected function displayPostInstallationNotes()
     {
         $this->line('<info>Default user</info>');
-        $this->line('<info>admin@shinra.com:admin</info>');
+        $this->line('<info>admin@ragnarok.com:admin</info>');
         $this->line('<info>✔ Feel Good Inc. </info>');
     }
 

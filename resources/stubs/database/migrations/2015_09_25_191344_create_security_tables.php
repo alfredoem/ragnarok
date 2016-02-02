@@ -64,7 +64,7 @@ class CreateSecurityTables extends Migration
         DB::table('SecUsers')->insert([
             'firstName' => 'Cloud',
             'lastName'  => 'Strife',
-            'email' => 'admin@shinra.com',
+            'email' => 'admin@ragnarok.com',
             'password' => bcrypt('admin'),
         ]);
     }

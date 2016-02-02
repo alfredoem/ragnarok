@@ -24,18 +24,21 @@ class RagnarokService
     public static function checkConnection()
     {
         $domain = SecParameter::find(self::SERVER_SECURITY_URL)->value;
-        //check, if a valid url is provided
-        if(!filter_var($domain, FILTER_VALIDATE_URL))
-        {
+
+        if (!filter_var($domain, FILTER_VALIDATE_URL)) {// check, if a valid url is provided
             return false;
         }
 
-        $handle = curl_init($domain);
-        curl_setopt($handle,  CURLOPT_RETURNTRANSFER, TRUE);
-        $response = curl_exec($handle);
-        $httpCode = curl_getinfo($handle, CURLINFO_HTTP_CODE);
-        curl_close($handle);
-        return ($httpCode != 302) ? false : true;
+        $domain = SecParameter::find(self::SERVER_SECURITY_URL)->value;
+
+        $valid = fsockopen($domain, 80, $errno, $errstr, 20);
+
+        if ($valid) {
+            return true;
+        } else {
+            return false;
+        }
+
     }
 
 
