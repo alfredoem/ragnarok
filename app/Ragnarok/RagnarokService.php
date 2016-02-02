@@ -26,19 +26,18 @@ class RagnarokService
         $domain = SecParameter::find(self::SERVER_SECURITY_URL)->value;
 
         if (!filter_var($domain, FILTER_VALIDATE_URL)) {// check, if a valid url is provided
+
             return false;
         }
 
-        $domain = SecParameter::find(self::SERVER_SECURITY_URL)->value;
+        $handle = curl_init($domain);
+        curl_setopt($handle,  CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($handle, CURLOPT_FOLLOWLOCATION, true);// 301 solved
+        $response = curl_exec($handle);
+        $httpCode = curl_getinfo($handle, CURLINFO_HTTP_CODE);
+        curl_close($handle);
 
-        $valid = fsockopen($domain, 80, $errno, $errstr, 20);
-
-        if ($valid) {
-            return true;
-        } else {
-            return false;
-        }
-
+        return $httpCode == 200 ? true : false;
     }
 
 

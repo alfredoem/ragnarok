@@ -52,10 +52,10 @@ class Install extends Command
 
     protected function InstallMigrations()
     {
-        $fileName = '2016_01_01_create_security_tables.php';
+        $fileName = '2016_01_01_000000_create_security_tables.php';
 
-        if(File::exists(base_path() . 'database/migrations/'. $fileName)) {
-            File::delete(base_path() . 'database/migrations/'. $fileName);
+        if(File::exists(database_path('migrations/' . $fileName))) {
+            File::delete(database_path('migrations/' . $fileName));
         }
 
         copy(
