@@ -10,6 +10,8 @@ Authentication, Roles (coming soon) and Menus (coming soon) for a specific bussi
 2. After composer update, add service providers to the `config/app.php`
 
 		Alfredoem\Ragnarok\RagnarokServiceProvider::class,
+		
+3. Configure your database.
 	    
 3. The next step is to install Ragnarok Security component. Run this command in terminal:
 
