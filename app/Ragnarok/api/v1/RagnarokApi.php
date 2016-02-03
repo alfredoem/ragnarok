@@ -1,6 +1,7 @@
 <?php namespace Alfredoem\Ragnarok\Api\v1;
 
 use Illuminate\Support\Facades\Auth;
+use Alfredoem\Ragnarok\SecUsers\SecUserSessions;
 
 class RagnarokApi
 {
@@ -12,7 +13,10 @@ class RagnarokApi
         if (Auth::attempt(['email' => $email, 'password' => $password], $remember)) {
 
             $user = auth()->user();
-            Auth::logout();
+
+            SecUserSessions::create(['userId' => $user->userId, 'sessionCode' => strtoupper(uniqid()) . rand(0, 20), 'status' => 1, 'datetimeIns' => date('Y-m-d H:m:s')]);
+
+            //Auth::logout(); //check if is necessary
 
             $this->success = true;
             $this->user = [

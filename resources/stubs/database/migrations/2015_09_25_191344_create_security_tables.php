@@ -15,6 +15,7 @@ class CreateSecurityTables extends Migration
         $this->secUsers();
         $this->secParameters();
         $this->secApps();
+        $this->secUserSessions();
     }
 
     public function secParameters()
@@ -35,7 +36,7 @@ class CreateSecurityTables extends Migration
             'name' => 'API_SECURITY_URL',
             'description' => 'URL del api servidor de seguridad',
             //'value'       => 'http://local.ragnarok.security.com/ragnarok/api/v1'
-            'value'       => 'http://172.16.11.237/ragnarok/public/api/v1'
+            'value'       => 'http://172.16.11.237/ragnarok/public/ragnarok/api/v1'
         ]);
 
         DB::table('SecParameters')->insert([
@@ -69,7 +70,7 @@ class CreateSecurityTables extends Migration
         ]);
     }
 
-    public function secApps()
+    public function secApps()// Ragnarok
     {
         \Schema::create('SecApps', function(Blueprint $table){
             $table->increments('appId');
@@ -79,6 +80,17 @@ class CreateSecurityTables extends Migration
             $table->string('logo', '250');
             $table->string('url', '250');
             $table->tinyInteger('status')->unsigned();
+        });
+    }
+
+    public function secUserSessions()// Ragnarok
+    {
+        \Schema::create('SecUserSessions', function(Blueprint $table){
+            $table->increments('appId');
+            $table->integer('userId');
+            $table->char('code', 15);
+            $table->char('status', 1);
+            $table->dateTime('datetimeIns');
         });
     }
 
@@ -92,5 +104,6 @@ class CreateSecurityTables extends Migration
         Schema::drop('SecUsers');
         Schema::drop('SecParameters');
         Schema::drop('SecApps');
+        Schema::drop('SecUserSessions');
     }
 }

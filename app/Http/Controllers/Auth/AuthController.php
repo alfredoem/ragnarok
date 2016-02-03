@@ -55,7 +55,8 @@ class AuthController extends Controller
         }
 
         if ($login->success) {
-            $this->AuthUser($login->user);
+            //$this->AuthUser($login->user);
+            //return redirect()->to($this->redirectPath)->with('user', $login->user);
             return $this->handleUserWasAuthenticated($request, $throttles);
         }
 

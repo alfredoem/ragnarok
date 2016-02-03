@@ -40,8 +40,16 @@ class RagnarokService
         return $httpCode == 200 ? true : false;
     }
 
+    public function validUserSession($userId, $sessionCode)
+    {
+        $url = SecParameter::find(self::API_SECURITY_URL)->value . '/valid-user-session';
 
-    private function executeCURL($data, $url)
+        $variable = json_encode(array("userId" => $userId, 'sessionCode' => $sessionCode)); // M, F o (vacio)
+        $response = $this->executeCURL($variable, $url);
+        return $response['response'];
+    }
+
+    public function executeCURL($data, $url)
     {
         $enc = EncryptAes::encrypt($data);
         $dataEncrypt = 'data='.$enc;
@@ -67,7 +75,7 @@ class RagnarokService
 
         curl_close($curl);
 
-        return $json;
+        return json_decode($json, true);
     }
 
 }
