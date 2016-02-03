@@ -35,7 +35,7 @@ class Authenticate
      */
     public function handle($request, Closure $next)
     {
-        if($request->has('uid')) {
+        if($this->auth->guest() && $request->has('uid')) {
             $RagnarokService = new RagnarokService;
             $validSession = $RagnarokService->validUserSession($request->uid, $request->usession);
             if ($validSession['success'] == true) {

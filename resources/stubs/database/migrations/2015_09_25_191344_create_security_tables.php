@@ -88,7 +88,7 @@ class CreateSecurityTables extends Migration
         \Schema::create('SecUserSessions', function(Blueprint $table){
             $table->increments('appId');
             $table->integer('userId');
-            $table->char('code', 15);
+            $table->char('sessionCode', 15);
             $table->char('status', 1);
             $table->dateTime('datetimeIns');
         });
