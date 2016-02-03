@@ -29,9 +29,12 @@ class AuthController extends Controller
     {
         $serverUrl =  SecParameter::find(RagnarokService::SERVER_SECURITY_URL)->value;
 
-        if (RagnarokService::checkConnection() && $serverUrl != url('/'))
-        {
-            return redirect()->to($serverUrl);
+        if ($serverUrl != url('/')) {
+
+            if (RagnarokService::checkConnection()) {
+                return redirect()->to($serverUrl);
+            }
+
         }
 
         return view('Ragnarok::auth.authenticate');
