@@ -1,5 +1,6 @@
 <?php namespace Alfredoem\Ragnarok\Http\Controllers\Auth;
 
+use Alfredoem\Ragnarok\Http\Requests\LoginRequest;
 use App\Http\Controllers\Controller;
 use Illuminate\Foundation\Auth\ThrottlesLogins;
 use Illuminate\Foundation\Auth\AuthenticatesAndRegistersUsers;
@@ -40,12 +41,9 @@ class AuthController extends Controller
         return view('Ragnarok::auth.authenticate');
     }
 
-    public function postLogin(Request $request)
+    public function postLogin(LoginRequest $request)
     {
-        $this->validate($request, [
-            'email' => 'required',
-            'password' => 'required'
-        ]);
+        $request->merge(['ipAddress' => $request->ip()]);
 
         $service = new RagnarokService;
 
@@ -58,8 +56,6 @@ class AuthController extends Controller
         }
 
         if ($login->success) {
-            //$this->AuthUser($login->user);
-            //return redirect()->to($this->redirectPath)->with('user', $login->user);
             return $this->handleUserWasAuthenticated($request, $throttles);
         }
 

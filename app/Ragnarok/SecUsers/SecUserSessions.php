@@ -6,12 +6,12 @@ class SecUserSessions extends Model
 {
     protected $table = 'SecUserSessions';
     public $primaryKey = 'userSessionId';
-    protected $fillable = ['userId', 'sessionCode', 'status', 'datetimeIns'];
+    protected $fillable = ['userId', 'sessionCode', 'ipAddress', 'status', 'datetimeIns'];
     public $timestamps = false;
 
     public function user()
     {
-        return $this->hasOne('Alfredoem\Ragnarok\SecUser', 'userId', 'userId');
+        return $this->hasOne('Alfredoem\Ragnarok\SecUsers\SecUser', 'userId', 'userId');
     }
 
 

@@ -1,5 +1,6 @@
 <?php namespace Alfredoem\Ragnarok\Api\v1;
 
+use Alfredoem\Ragnarok\Utilities\Make;
 use Illuminate\Support\Facades\Auth;
 use Alfredoem\Ragnarok\SecUsers\SecUserSessions;
 
@@ -8,15 +9,14 @@ class RagnarokApi
     protected $success = false;
     protected $user = array();
 
-    public function login($email, $password, $remember)
+    public function login($email, $password, $remember, $ipAddress)
     {
         if (Auth::attempt(['email' => $email, 'password' => $password], $remember)) {
 
             $user = auth()->user();
 
-            SecUserSessions::create(['userId' => $user->userId, 'sessionCode' => strtoupper(uniqid()) . rand(0, 20), 'status' => 1, 'datetimeIns' => date('Y-m-d H:m:s')]);
-
-            //Auth::logout(); //check if is necessary
+            SecUserSessions::create(['userId' => $user->userId, 'sessionCode' => Make::uniqueString(), 'ipAddress' => $ipAddress,
+                'status' => 1, 'datetimeIns' => date('Y-m-d H:m:s')]);
 
             $this->success = true;
             $this->user = [

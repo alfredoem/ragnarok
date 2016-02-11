@@ -79,7 +79,7 @@ class Install extends Command
         ));
 
         file_put_contents($path, str_replace(
-            'App\User::class', 'Alfredoem\Ragnarok\SecUser::class', file_get_contents($path)
+            'App\User::class', 'Alfredoem\Ragnarok\SecUsers\SecUser::class', file_get_contents($path)
         ));
     }
 

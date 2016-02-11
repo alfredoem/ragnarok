@@ -36,7 +36,7 @@ class CreateSecurityTables extends Migration
             'name' => 'API_SECURITY_URL',
             'description' => 'URL del api servidor de seguridad',
             //'value'       => 'http://local.ragnarok.security.com/ragnarok/api/v1'
-            'value'       => 'http://172.16.11.237/ragnarok/public/ragnarok/api/v1'
+            'value'       => 'http://172.16.11.237/ragnarok/public/api/v1'
         ]);
 
         DB::table('SecParameters')->insert([

@@ -18,7 +18,7 @@ class RagnarokService
         }
 
         $api = new RagnarokApi;
-        return Make::arrayToObject($api->login($data['email'], $data['password'], $data['remember']));
+        return Make::arrayToObject($api->login($data['email'], $data['password'], $data['remember'], $data['ipAddress']));
     }
 
     public static function checkConnection()
@@ -43,8 +43,7 @@ class RagnarokService
     public function validUserSession($userId, $sessionCode)
     {
         $url = SecParameter::find(self::API_SECURITY_URL)->value . '/valid-user-session';
-
-        $variable = json_encode(array("userId" => $userId, 'sessionCode' => $sessionCode)); // M, F o (vacio)
+        $variable = json_encode(array("userId" => $userId, 'sessionCode' => $sessionCode));
         $response = $this->executeCURL($variable, $url);
         return $response['response'];
     }
@@ -61,7 +60,7 @@ class RagnarokService
         curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
         curl_setopt($curl, CURLOPT_FAILONERROR, true);
         curl_setopt($curl, CURLOPT_FRESH_CONNECT, true);
-        curl_setopt($curl, CURLOPT_SSL_VERIFYPEER, false);//    Retirar en HTTPS
+        curl_setopt($curl, CURLOPT_SSL_VERIFYPEER, false);
         curl_setopt($curl, CURLOPT_URL, $url);
         $response = curl_exec($curl);
         $http_status = curl_getinfo($curl, CURLINFO_HTTP_CODE);
