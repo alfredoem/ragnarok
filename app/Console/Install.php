@@ -59,8 +59,7 @@ class Install extends Command
         }
 
         copy(
-            RAGNAROK . '/resources/stubs/database/migrations/2015_09_25_191344_create_security_tables.php',
-            //database_path('migrations/' . date('Y_m_d_His') .'_create_security_tables.php')
+            RAGNAROK . '/resources/stubs/database/migrations/' . $fileName,
             database_path('migrations/' . $fileName)
         );
     }
