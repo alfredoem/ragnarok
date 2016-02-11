@@ -115,7 +115,7 @@ class Install extends Command
 
     protected function displayPostInstallationNotes()
     {
-        $this->line('<info>Default user</info>');
+        $this->line('<info>Default testing user</info>');
         $this->line('<info>admin@ragnarok.com:admin</info>');
         $this->line('<info>✔ Feel Good Inc. </info>');
     }

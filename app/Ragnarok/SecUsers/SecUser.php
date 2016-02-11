@@ -1,4 +1,4 @@
-<?php namespace Alfredoem\Ragnarok;
+<?php namespace Alfredoem\Ragnarok\SecUsers;
 
 use Illuminate\Auth\Authenticatable;
 use Illuminate\Database\Eloquent\Model;
