@@ -11,7 +11,7 @@ use Alfredoem\Ragnarok\Console\Install;
 
 class RagnarokServiceProvider extends ServiceProvider
 {
-    protected $defer = true;
+    protected $defer = false;
 
     public function boot()
     {
