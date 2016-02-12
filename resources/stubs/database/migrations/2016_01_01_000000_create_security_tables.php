@@ -90,6 +90,7 @@ class CreateSecurityTables extends Migration
             $table->integer('userId');
             $table->char('sessionCode', 15);
             $table->char('status', 1);
+            $table->date('dateIns');
             $table->dateTime('datetimeIns');
         });
     }

@@ -19,8 +19,9 @@ class RagnarokServiceProvider extends ServiceProvider
             $this->defineRoutes();
         });
 
-        $this->defineResources();
+        $this->defineViews();
         $this->defineAssets();
+        $this->defineLanguages();
     }
 
     protected function defineRoutes()
@@ -34,7 +35,7 @@ class RagnarokServiceProvider extends ServiceProvider
         }
     }
 
-    protected function defineResources()
+    protected function defineViews()
     {
         $this->loadViewsFrom(RAGNAROK . '/resources/views', 'Ragnarok');
 
@@ -47,6 +48,11 @@ class RagnarokServiceProvider extends ServiceProvider
                 RAGNAROK . '/resources/views' => base_path('resources/views/vendor/Ragnarok'),
             ]);
         }
+    }
+
+    public function defineLanguages()
+    {
+        $this->loadTranslationsFrom(RAGNAROK . '/resources/lang', 'Ragnarok');
     }
 
     public function defineAssets()

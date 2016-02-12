@@ -36,10 +36,12 @@ class Authenticate
     public function handle($request, Closure $next)
     {
         if($this->auth->guest() && $request->has('uid')) {
+
             $RagnarokService = new RagnarokService;
             $validSession = $RagnarokService->validUserSession($request->uid, $request->usession);
-            if ($validSession['success'] == true) {
-                $data = $validSession['data'];
+
+            if ($validSession['status'] == true) {
+                $data = $validSession['response']['data'];
                 $user = [
                     'id' => $data['userId'],
                     'email' => $data['email'],
@@ -52,7 +54,7 @@ class Authenticate
                 $user = new GenericUser($user);
                 Auth::login($user, true);
 
-                return $next($request);
+                return redirect()->to('/');
             }
         }
 

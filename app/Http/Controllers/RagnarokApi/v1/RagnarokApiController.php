@@ -17,7 +17,7 @@ class RagnarokApiController extends Controller
 
     public function getIndex()
     {
-        return "=)";
+        return trans('Ragnarok::messages.api.info');
     }
 
     public function postLogin(Request $request)

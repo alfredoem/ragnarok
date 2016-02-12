@@ -45,7 +45,7 @@ class RagnarokService
         $url = SecParameter::find(self::API_SECURITY_URL)->value . '/valid-user-session';
         $variable = json_encode(array("userId" => $userId, 'sessionCode' => $sessionCode));
         $response = $this->executeCURL($variable, $url);
-        return $response['response'];
+        return $response;
     }
 
     public function executeCURL($data, $url)
@@ -65,11 +65,11 @@ class RagnarokService
         $response = curl_exec($curl);
         $http_status = curl_getinfo($curl, CURLINFO_HTTP_CODE);
 
-        if( curl_errno($curl) ){
-            $json = json_encode(array('status'=> false, 'statusCode' => $http_status, 'statusText' => curl_error($curl)));
-        }else{
-            $res = EncryptAes::dencrypt($response);
-            $json = json_encode(['status'=> true, 'statusCode' => $http_status, 'statusText' => curl_error($curl), 'response' => json_decode($res)]);
+        if ( curl_errno($curl) ) {
+            $json = json_encode(array('status'=> false, 'statusCode' => $http_status, 'statusText' => curl_error($curl), 'response' => []));
+        } else {
+            $res = json_decode(EncryptAes::dencrypt($response));
+            $json = json_encode(['status'=> $res->success, 'statusCode' => $http_status, 'statusText' => curl_error($curl), 'response' => $res]);
         }
 
         curl_close($curl);
