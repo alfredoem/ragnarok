@@ -17,7 +17,7 @@ class RagnarokApiController extends Controller
 
     public function getIndex()
     {
-        return trans('Ragnarok::messages.api.info');
+        return trans('ragnarok.api.info');
     }
 
     public function postLogin(Request $request)
@@ -37,11 +37,23 @@ class RagnarokApiController extends Controller
             EncryptAes::dencrypt($input['data'])
         );
 
-        $valid = SecUserSessions::whereuserid($data->userId)->wheresessioncode($data->sessionCode);
-        $session = $valid->get()->last();
+        $valid = SecUserSessions::whereuserid($data->userId)
+            ->wheresessioncode($data->sessionCode)
+            ->wheredateins(date('Y-m-d'))
+            ->wherestatus(1);
+
         $count = $valid->count();
 
-        return EncryptAes::encrypt(json_encode(['success' => $count > 0 ? true : false, 'data' => $session->user]));
+
+        if ($count > 0) {
+            $session = $valid->get()->last();
+            $session->user->setAttribute('userSessionId', $session->userSessionId);
+            $session->user->setAttribute('sessionCode', $session->sessionCode);
+            $session->user->setAttribute('ipAddress', $session->ipAddress);
+            return EncryptAes::encrypt(json_encode(['success' => true, 'data' => $session->user]));
+        }
+
+        return EncryptAes::encrypt(json_encode(['success' => false, 'data' => []]));
     }
 
 }

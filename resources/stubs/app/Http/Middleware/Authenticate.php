@@ -35,29 +35,6 @@ class Authenticate
      */
     public function handle($request, Closure $next)
     {
-        if($this->auth->guest() && $request->has('uid')) {
-
-            $RagnarokService = new RagnarokService;
-            $validSession = $RagnarokService->validUserSession($request->uid, $request->usession);
-
-            if ($validSession['status'] == true) {
-                $data = $validSession['response']['data'];
-                $user = [
-                    'id' => $data['userId'],
-                    'email' => $data['email'],
-                    'firstName' => $data['firstName'],
-                    'lastName'  => $data['lastName'],
-                    'status'    => $data['status'],
-                    'remember_token' => 'somerandomvalue',
-                ];
-
-                $user = new GenericUser($user);
-                Auth::login($user, true);
-
-                return redirect()->to('/');
-            }
-        }
-
         if ($this->auth->guest()) {
             if ($request->ajax()) {
                 return response('Unauthorized.', 401);

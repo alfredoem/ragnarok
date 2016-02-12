@@ -11,20 +11,21 @@ class RagnarokApi
 
     public function login($email, $password, $remember, $ipAddress)
     {
+
         if (Auth::attempt(['email' => $email, 'password' => $password], $remember)) {
 
             $user = auth()->user();
 
-            SecUserSessions::create(['userId' => $user->userId, 'sessionCode' => Make::uniqueString(), 'ipAddress' => $ipAddress,
-                'status' => 1, 'datetimeIns' => date('Y-m-d H:m:s')]);
+            // Crea una session activa para el usuario
+            $session = SecUserSessions::create(['userId' => $user->userId, 'sessionCode' => Make::uniqueString(),
+                'ipAddress' => $ipAddress, 'status' => 1, 'dateIns' => date('Y-m-d'),
+                'datetimeIns' => date('Y-m-d H:m:s')]);
+
+            session()->set('ipAddress', $session->ipAddress);
+            session()->set('sessionCode', $session->sessionCode);
+            session()->set('userSessionId', $session->userSessionId);
 
             $this->success = true;
-            $this->user = [
-                'userId' => $user->userId, 'email' => $user->email, 'firstName' => $user->firstName,
-                'lastName'  => $user->lastName, 'status' => $user->status,
-                'remember_token' => $user->remember_token
-            ];
-
         }
 
         return ['success' => $this->success, 'user' => $this->user];

@@ -1,6 +1,7 @@
 <?php namespace Alfredoem\Ragnarok\Http\Controllers\Auth;
 
 use Alfredoem\Ragnarok\Http\Requests\LoginRequest;
+use Alfredoem\Ragnarok\SecUsers\SecUserSessions;
 use App\Http\Controllers\Controller;
 use Illuminate\Foundation\Auth\ThrottlesLogins;
 use Illuminate\Foundation\Auth\AuthenticatesAndRegistersUsers;
@@ -12,6 +13,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Auth\GenericUser;
 
 use Alfredoem\Ragnarok\SecParameters\SecParameter;
+use Illuminate\Support\Facades\Session;
 
 class AuthController extends Controller
 {
@@ -23,7 +25,36 @@ class AuthController extends Controller
 
     public function __construct()
     {
-        $this->middleware('guest', ['except' => 'getLogout']);
+        $this->middleware('guest', ['except' => ['getLogout', 'getVerify']]);
+    }
+
+    public function getVerify($userId, $sessionCode)
+    {
+        $RagnarokService = new RagnarokService;
+        $validSession = $RagnarokService->validUserSession($userId, $sessionCode);
+
+        if ($validSession['status'] == true) {
+            $data = $validSession['response']['data'];
+            $user = [
+                'id' => $data['userId'],
+                'email' => $data['email'],
+                'firstName' => $data['firstName'],
+                'lastName'  => $data['lastName'],
+                'status'    => $data['status'],
+                'userSessionId' => $data['status'],
+                'sessionId' => $data['userSessionId'],
+                'sessionCode' => $data['sessionCode'],
+                'ipAddress' => $data['ipAddress'],
+                'remember_token' => 'somerandomvalue',
+            ];
+
+            $user = new GenericUser($user);
+            Auth::login($user, true);
+
+            return redirect()->to('/');
+        }
+
+        return $this->getLogout();
     }
 
     public function getLogin()
@@ -63,6 +94,8 @@ class AuthController extends Controller
             $this->incrementLoginAttempts($request);
         }
 
+
+
         return redirect($this->loginPath())
             ->withInput($request->only($this->loginUsername(), 'remember'))
             ->withErrors([
@@ -70,19 +103,17 @@ class AuthController extends Controller
             ]);
     }
 
-    public function AuthUser($data)
+    public function getLogout()
     {
-        $user = [
-            'id' => $data->userId,
-            'email' => $data->email,
-            'firstName' => $data->firstName,
-            'lastName'  => $data->lastName,
-            'status'    => $data->status,
-            'remember_token' => $data->remember_token
-        ];
+        $session = SecUserSessions::find(session('userSessionId'));
 
-        $user = new GenericUser($user);
-        Auth::login($user, true);
+        if ($session) {
+            $session->update(['status' => 0]);
+        }
+
+        Auth::logout();
+        Session::flush();
+        return redirect(property_exists($this, 'redirectAfterLogout') ? $this->redirectAfterLogout : '/');
     }
 
 }
