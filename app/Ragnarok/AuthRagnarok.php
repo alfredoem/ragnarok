@@ -5,7 +5,6 @@ use Illuminate\Support\Facades\Session;
 
 class AuthRagnarok
 {
-
     protected $sessionName = 'Crona$user';
 
     public static function check()
@@ -18,7 +17,6 @@ class AuthRagnarok
         }
     }
 
-
     public static function user()
     {
         if(self::check()){
@@ -27,7 +25,6 @@ class AuthRagnarok
             return null;
         }
     }
-
 
     public static function make($user)
     {
@@ -46,11 +43,13 @@ class AuthRagnarok
         ];
 
         Session::put('Crona$user', Make::arrayToObject($data));
+
+        return Session::get('Crona$user');
     }
 
-
-
+    public static function forget()
+    {
+        Session::forget('Crona$user');
+    }
 
 }
-
-

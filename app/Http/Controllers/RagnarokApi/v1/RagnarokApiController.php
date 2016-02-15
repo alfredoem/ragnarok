@@ -1,10 +1,12 @@
 <?php namespace Alfredoem\Ragnarok\Http\Controllers\RagnarokApi\v1;
 
+use Alfredoem\Ragnarok\AuthRagnarok;
 use Alfredoem\Ragnarok\SecUsers\SecUserSessions;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Alfredoem\Ragnarok\Api\v1\RagnarokApi;
 use Alfredoem\Ragnarok\Utilities\EncryptAes;
+use Illuminate\Support\Facades\Auth;
 
 class RagnarokApiController extends Controller
 {
@@ -20,6 +22,7 @@ class RagnarokApiController extends Controller
         return trans('ragnarok.api.info');
     }
 
+
     public function postValidUserSession(Request $request)
     {
         $input = $request->all();
@@ -34,13 +37,11 @@ class RagnarokApiController extends Controller
 
         $count = $valid->count();
 
-
         if ($count > 0) {
             $session = $valid->get()->last();
-            $session->user->setAttribute('userSessionId', $session->userSessionId);
-            $session->user->setAttribute('sessionCode', $session->sessionCode);
-            $session->user->setAttribute('ipAddress', $session->ipAddress);
-            return EncryptAes::encrypt(json_encode(['success' => true, 'data' => $session->user]));
+            $user = AuthRagnarok::make($session->user);
+            AuthRagnarok::forget();
+            return EncryptAes::encrypt(json_encode(['success' => true, 'data' => $user]));
         }
 
         return EncryptAes::encrypt(json_encode(['success' => false, 'data' => []]));
