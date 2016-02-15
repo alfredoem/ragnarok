@@ -21,9 +21,15 @@ class RagnarokApi
                 'ipAddress' => $ipAddress, 'status' => 1, 'dateIns' => date('Y-m-d'),
                 'datetimeIns' => date('Y-m-d H:m:s')]);
 
-            session()->set('ipAddress', $session->ipAddress);
-            session()->set('sessionCode', $session->sessionCode);
-            session()->set('userSessionId', $session->userSessionId);
+            $this->user = [
+                'userId' => $user->userId, 'email' => $user->email, 'firstName' => $user->firstName,
+                'lastName'  => $user->lastName, 'status' => $user->status, 'ipAddress' => $ipAddress,
+                'sessionCode' => $session->sessionCode, 'userSessionId' => $session->userSessionId,
+                'remember_token' => $user->remember_token
+            ];
+
+            // Logout default Auth user. Se creara una session de usuario personalizada
+            Auth::logout();
 
             $this->success = true;
         }

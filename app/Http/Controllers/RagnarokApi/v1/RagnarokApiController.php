@@ -20,16 +20,6 @@ class RagnarokApiController extends Controller
         return trans('ragnarok.api.info');
     }
 
-    public function postLogin(Request $request)
-    {
-        $input = $request->all();
-        $data = json_decode(
-            EncryptAes::dencrypt($input['data'])
-        );
-
-        return EncryptAes::encrypt(json_encode($this->api->login($data->email, $data->password, $data->remember)));
-    }
-
     public function postValidUserSession(Request $request)
     {
         $input = $request->all();
