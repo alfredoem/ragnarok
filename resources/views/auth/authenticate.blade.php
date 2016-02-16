@@ -1,28 +1,35 @@
-@extends('Ragnarok::layouts.auth')
+@extends('Ragnarok::layouts.app')
 
 @section('style')
-    <link rel="stylesheet" href="{{asset('css/alfredoem/ragnarok/authenticate.css')}}"/>
+    <link rel="stylesheet" href="{{asset('css/alfredoem/ragnarok/authenticate-material.min.css')}}"/>
 @endsection
 
 <!-- Main Content -->
 @section('content')
-<div class="container">
-    <form class="form-signin" role="form" method="POST" action="{{ url('/auth/login') }}">
+
+    <h1>Ragnarok Security</h1>
+
+    <form role="form" method="POST" action="{{ url('/auth/login') }}">
         {!! csrf_field() !!}
-        <h2 class="form-signin-heading">Please sign in</h2>
         @include('Ragnarok::common.errors', ['form' => 'default'])
-        <label for="inputEmail" class="sr-only">Email address</label>
-        <input type="email" id="email" name="email" class="form-control" placeholder="Email address" autofocus>
-        <label for="inputPassword" class="sr-only">Password</label>
-        <input type="password" id="password" name="password" class="form-control" placeholder="Password">
-        <div class="checkbox">
-          <label>
-            <input type="checkbox" name="remember"> Remember me
-          </label>
+        <div class="group">
+            <input type="text" name="email" id="email" placeholder="Email"><span class="highlight"></span><span class="bar"></span>
         </div>
-        <button class="btn btn-lg btn-primary btn-block" type="submit">Sign in</button>
+
+        <div class="group">
+            <input type="password" name="password" id="password" placeholder="Password"><span class="highlight"></span><span class="bar"></span>
+        </div>
+
+        <div>
+            <p><label><input type="checkbox" name="remember"> Remember me</label></p>
+        </div>
+
+        <button type="submit" class="button buttonBlue">Login</button>
     </form>
-</div>
+
+    <footer>
+        <p>Feel Good Inc.</p>
+    </footer>
 @endsection
 
 @section('script')@endsection
