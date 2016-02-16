@@ -89,6 +89,7 @@ class CreateSecurityTables extends Migration
             $table->increments('appId');
             $table->integer('userId');
             $table->char('sessionCode', 15);
+            $table->string('ipAddress', 50);
             $table->char('status', 1);
             $table->date('dateIns');
             $table->dateTime('datetimeIns');
@@ -102,9 +103,9 @@ class CreateSecurityTables extends Migration
      */
     public function down()
     {
-        Schema::drop('SecUsers');
-        Schema::drop('SecParameters');
-        Schema::drop('SecApps');
-        Schema::drop('SecUserSessions');
+        \Schema::drop('SecUsers');
+        \Schema::drop('SecParameters');
+        \Schema::drop('SecApps');
+        \Schema::drop('SecUserSessions');
     }
 }
