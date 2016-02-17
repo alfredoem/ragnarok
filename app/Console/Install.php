@@ -103,6 +103,11 @@ class Install extends Command
             RAGNAROK . '/resources/stubs/app/Http/Middleware/RagnarokApiGuard.php',
             app_path('Http/Middleware/RagnarokApiGuard.php')
         );
+
+        copy(
+            RAGNAROK . '/resources/stubs/app/Http/Middleware/VerifyCsrfToken.php',
+            app_path('Http/Middleware/VerifyCsrfToken.php')
+        );
     }
 
     public function installRoutes()

@@ -3,38 +3,54 @@
 use Alfredoem\Ragnarok\Utilities\Make;
 use Illuminate\Support\Facades\Auth;
 use Alfredoem\Ragnarok\SecUsers\SecUserSessions;
+use Alfredoem\Ragnarok\AuthRagnarok;
+use Alfredoem\Ragnarok\RagnarokResponse;
+use Illuminate\Support\Facades\Session;
 
 class RagnarokApi
 {
     protected $success = false;
-    protected $user = array();
+    protected $userRagnarok;
+    protected $responseRagnarok;
 
-    public function login($email, $password, $remember, $ipAddress)
+    public function __construct(AuthRagnarok $userRagnarok, RagnarokResponse $responseRagnarok)
     {
+        $this->responseRagnarok = $responseRagnarok;
+        $this->userRagnarok = $userRagnarok;
+    }
 
-        if (Auth::attempt(['email' => $email, 'password' => $password], $remember)) {
+    /**
+     * @param $data
+     * @return \Alfredoem\Ragnarok\RagnarokResponse
+     */
 
-            $user = auth()->user();
+    public function login($data)
+    {
+        if( ! key_exists('remember', $data)) {
+            $data['remember'] = false;
+        }
 
-            // Crea una session activa para el usuario
-            $session = SecUserSessions::create(['userId' => $user->userId, 'sessionCode' => Make::uniqueString(),
-                'ipAddress' => $ipAddress, 'status' => 1, 'dateIns' => date('Y-m-d'),
+        // login attempt
+        if (Auth::once(['email' => $data['email'], 'password' => $data['password']], $data['remember'])) {
+
+            $auth = Auth::user();
+
+            // Store session user
+            $session = SecUserSessions::create(['userId' => $auth->userId, 'sessionCode' => Make::uniqueString(),
+                'ipAddress' => $data['ipAddress'], 'status' => 1, 'dateIns' => date('Y-m-d'),
                 'datetimeIns' => date('Y-m-d H:m:s')]);
 
-            $this->user = [
-                'userId' => $user->userId, 'email' => $user->email, 'firstName' => $user->firstName,
-                'lastName'  => $user->lastName, 'status' => $user->status, 'ipAddress' => $ipAddress,
-                'sessionCode' => $session->sessionCode, 'userSessionId' => $session->userSessionId,
-                'remember_token' => $user->remember_token
-            ];
+            $auth->ipAddress = $data['ipAddress'];
+            $auth->sessionCode = $session->sessionCode;
+            $auth->userSessionId = $session->userSessionId;
+            $auth->environment = Session::get('environment');
 
-            // Logout default Auth user. Se creara una session de usuario personalizada
-            Auth::logout();
+            // Make ragnarok user
+            $this->userRagnarok ->make($auth);
 
             $this->success = true;
         }
 
-        return ['success' => $this->success, 'user' => $this->user];
+        return $this->responseRagnarok->make($this->success, $this->userRagnarok);
     }
-
 }

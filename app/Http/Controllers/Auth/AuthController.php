@@ -2,18 +2,12 @@
 
 use Alfredoem\Ragnarok\AuthRagnarok;
 use Alfredoem\Ragnarok\Http\Requests\LoginRequest;
-use Alfredoem\Ragnarok\SecUsers\SecUserSessions;
-use Alfredoem\Ragnarok\Utilities\Make;
 use App\Http\Controllers\Controller;
 use Illuminate\Foundation\Auth\ThrottlesLogins;
 use Illuminate\Foundation\Auth\AuthenticatesAndRegistersUsers;
 use Illuminate\Http\Request;
 
 use Alfredoem\Ragnarok\RagnarokService;
-
-use Illuminate\Support\Facades\Auth;
-
-use Alfredoem\Ragnarok\SecParameters\SecParameter;
 use Illuminate\Support\Facades\Session;
 
 class AuthController extends Controller
@@ -23,20 +17,28 @@ class AuthController extends Controller
     protected $loginPath = '/auth/login';
     protected $redirectPath = '/';
     protected $redirectAfterLogout = '/auth/login';
+    protected $userRagnarok;
+    protected $serviceRagnarok;
+    /**
+     * 1: security server, 2: admin application
+     * @var int
+     */
+    protected $environment = 1;
 
-    public function __construct()
+    public function __construct(AuthRagnarok $userRagnarok, RagnarokService $serviceRagnarok)
     {
+        $this->userRagnarok = $userRagnarok;
+        $this->serviceRagnarok = $serviceRagnarok;
         $this->middleware('guest', ['except' => ['getLogout', 'getVerify']]);
     }
 
     public function getVerify($userId, $sessionCode)
     {
-        $RagnarokService = new RagnarokService;
-        $validSession = $RagnarokService->validUserSession($userId, $sessionCode);
+        $validSession = $this->serviceRagnarok->validUserSession($userId, $sessionCode);
 
-        if ($validSession['status'] == true) {
-            $data = Make::arrayToObject($validSession['response']['data']);
-            AuthRagnarok::make($data);
+        if ($validSession->status) {
+            $data = $validSession->response->data;
+            $this->userRagnarok->make($data);
             return redirect()->to('/');
         }
 
@@ -45,15 +47,18 @@ class AuthController extends Controller
 
     public function getLogin()
     {
-        $serverUrl =  SecParameter::find(RagnarokService::SERVER_SECURITY_URL)->value;
+        $serverUrl =  $this->serviceRagnarok->getServerSecurityUrl();
 
         if ($serverUrl != url('/')) {
 
-            if (RagnarokService::checkConnection()) {
+            if ($this->serviceRagnarok->checkConnection()) {
                 return redirect()->to($serverUrl);
             }
 
+            $this->environment = 2;
         }
+
+        Session::put('environment', $this->environment);
 
         return view('Ragnarok::auth.authenticate');
     }
@@ -62,11 +67,7 @@ class AuthController extends Controller
     {
         $request->merge(['ipAddress' => $request->ip()]);
 
-        $service = new RagnarokService;
-
-        $login = $service->login($request->all());
-
-        AuthRagnarok::make($login->user);
+        $login = $this->serviceRagnarok->login($request->all());
 
         $throttles = $this->isUsingThrottlesLoginsTrait();
 
@@ -91,13 +92,7 @@ class AuthController extends Controller
 
     public function getLogout()
     {
-        $session = SecUserSessions::find(session('userSessionId'));
-
-        if ($session) {
-            $session->update(['status' => 0]);
-        }
-
-        Auth::logout();
+        $this->serviceRagnarok->forgetUserSession();
         Session::flush();
         return redirect(property_exists($this, 'redirectAfterLogout') ? $this->redirectAfterLogout : '/');
     }

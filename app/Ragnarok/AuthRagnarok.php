@@ -1,55 +1,71 @@
 <?php namespace Alfredoem\Ragnarok;
 
-use Alfredoem\Ragnarok\Utilities\Make;
 use Illuminate\Support\Facades\Session;
 
 class AuthRagnarok
 {
-    protected $sessionName = 'Crona$user';
+    const SESSION_NAME = 'Crona$user';
 
+    public $userId = '';
+    public $email = '';
+    public $firstName = '';
+    public $lastName = '';
+    public $status = '';
+    public $remember_token = '';
+    public $userSessionId = '';
+    public $sessionCode = '';
+    public $ipAddress = '';
+    public $environment = 0;
+
+    /**
+     * @return bool
+     */
     public static function check()
     {
-        if(Session::has('Crona$user')){
+        if (Session::has(self::SESSION_NAME)) {
             return true;
-        }else{
-            Session::forget('Crona$user');
-            return false;
         }
+
+        Session::forget(self::SESSION_NAME);
+        return false;
     }
 
+    /**
+     * @return \Alfredoem\Ragnarok\AuthRagnarok
+     */
     public static function user()
     {
-        if(self::check()){
-            return Session::get('Crona$user');
-        }else{
-            return null;
+        if (self::check()) {
+            return Session::get(self::SESSION_NAME);
         }
+
+        return null;
     }
 
-    public static function make($user)
+    /**
+     * @return \Alfredoem\Ragnarok\AuthRagnarok
+     */
+    public function make($user)
     {
-        Session::put('Crona$user', '');
+        $this->userId = $user->userId;
+        $this->email = $user->email;
+        $this->firstName = $user->firstName;
+        $this->lastName = $user->lastName;
+        $this->status = $user->status;
+        $this->remember_token = $user->remember_token;
+        $this->userSessionId = $user->userSessionId;
+        $this->sessionCode = $user->sessionCode;
+        $this->ipAddress = $user->ipAddress;
+        $this->environment = $user->environment;
 
-        $data = [
-            'userId' => $user->userId,
-            'email' => $user->email,
-            'firstName' => $user->firstName,
-            'lastName'  => $user->lastName,
-            'status'    => $user->status,
-            'userSessionId' => $user->userSessionId,
-            'sessionCode' => $user->sessionCode,
-            'ipAddress' => $user->ipAddress,
-            'remember_token' => $user->remember_token,
-        ];
+        Session::put(self::SESSION_NAME, $this);
 
-        Session::put('Crona$user', Make::arrayToObject($data));
-
-        return Session::get('Crona$user');
+        return Session::get(self::SESSION_NAME);
     }
 
     public static function forget()
     {
-        Session::forget('Crona$user');
+        Session::forget(self::SESSION_NAME);
     }
 
 }

@@ -1,80 +1,96 @@
 <?php namespace Alfredoem\Ragnarok;
 
-use Alfredoem\Ragnarok\Utilities\EncryptAes;
 use Alfredoem\Ragnarok\SecParameters\SecParameter;
 use Alfredoem\Ragnarok\Api\v1\RagnarokApi;
-use Alfredoem\Ragnarok\Utilities\Make;
+use Alfredoem\Ragnarok\SecUsers\SecUserSessions;
 
 class RagnarokService
 {
     const API_SECURITY_URL = 1;
     const SERVER_SECURITY_URL = 2;
 
+    protected $curlRagnarok;
+
+    public function __construct(RagnarokCurl $curlRagnarok, RagnarokApi $apiRagnarok)
+    {
+        $this->apiRagnarok = $apiRagnarok;
+        $this->curlRagnarok = $curlRagnarok;
+    }
+
+    /**
+     * @param $data
+     * @return RagnarokResponse
+     */
     public function login($data)
     {
-        if(! isset($data['remember']))
-        {
-            $data['remember'] = false;
-        }
-
-        $api = new RagnarokApi;
-        return Make::arrayToObject($api->login($data['email'], $data['password'], $data['remember'], $data['ipAddress']));
+        return $this->apiRagnarok->login($data);
     }
 
-    public static function checkConnection()
+    /**
+     * @return bool
+     */
+    public function checkConnection()
     {
-        $domain = SecParameter::find(self::SERVER_SECURITY_URL)->value;
-
-        if (!filter_var($domain, FILTER_VALIDATE_URL)) {// check, if a valid url is provided
-
-            return false;
-        }
-
-        $handle = curl_init($domain);
-        curl_setopt($handle,  CURLOPT_RETURNTRANSFER, true);
-        curl_setopt($handle, CURLOPT_FOLLOWLOCATION, true);// 301 solved
-        $response = curl_exec($handle);
-        $httpCode = curl_getinfo($handle, CURLINFO_HTTP_CODE);
-        curl_close($handle);
-
-        return $httpCode == 200 ? true : false;
+        $serverUrl = $this->getServerSecurityUrl();
+        return $this->curlRagnarok->httpStatusConnection($serverUrl);
     }
 
+    /**
+     * @param $userId
+     * @param $sessionCode
+     * @return RagnarokCurlResponse
+     */
     public function validUserSession($userId, $sessionCode)
     {
-        $url = SecParameter::find(self::API_SECURITY_URL)->value . '/valid-user-session';
-        $variable = json_encode(array("userId" => $userId, 'sessionCode' => $sessionCode));
-        $response = $this->executeCURL($variable, $url);
+        $url = $this->getAPISecurityUrl('valid-user-session', [$userId, $sessionCode]);
+
+        $response = $this->curlRagnarok->httpGetRequest($url);
+
         return $response;
     }
 
-    public function executeCURL($data, $url)
+    public function forgetUserSession()
     {
-        $enc = EncryptAes::encrypt($data);
-        $dataEncrypt = 'data='.$enc;
-        $dataEncrypt = str_replace('+', '%2B', $dataEncrypt);
-        $curl = curl_init();
-        curl_setopt($curl, CURLOPT_HEADER, 0);
-        curl_setopt($curl, CURLOPT_POST, count($dataEncrypt));
-        curl_setopt($curl, CURLOPT_POSTFIELDS, $dataEncrypt);
-        curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
-        curl_setopt($curl, CURLOPT_FAILONERROR, true);
-        curl_setopt($curl, CURLOPT_FRESH_CONNECT, true);
-        curl_setopt($curl, CURLOPT_SSL_VERIFYPEER, false);
-        curl_setopt($curl, CURLOPT_URL, $url);
-        $response = curl_exec($curl);
-        $http_status = curl_getinfo($curl, CURLINFO_HTTP_CODE);
+        $auth = AuthRagnarok::user();
 
-        if ( curl_errno($curl) ) {
-            $json = json_encode(array('status'=> false, 'statusCode' => $http_status, 'statusText' => curl_error($curl), 'response' => []));
-        } else {
-            $res = json_decode(EncryptAes::dencrypt($response));
-            $json = json_encode(['status'=> $res->success, 'statusCode' => $http_status, 'statusText' => curl_error($curl), 'response' => $res]);
+        if ($auth->environment == 1 || ( ! $this->checkConnection() && $auth->environment == 2)) {
+            $session = SecUserSessions::find($auth->userSessionId);
+
+            if ($session) {
+                $session->update(['status' => 0, 'datetimeUpd' => date('Y-m-d H:m:s')]);
+            }
+        }
+    }
+
+    /**
+     * @param string $method
+     * @param array $parameters
+     * @return string
+     */
+    public function getAPISecurityUrl($method = '', $parameters = array())
+    {
+        $url = SecParameter::find(self::API_SECURITY_URL)->value;
+
+        if ($method) {
+            $url .= "/{$method}";
+
+            if ( ! empty($parameters)) {
+                foreach ($parameters as $param) {
+                    $url .= "/{$param}";
+                }
+            }
+
         }
 
-        curl_close($curl);
+        return $url;
+    }
 
-        return json_decode($json, true);
+    /**
+     * @return string
+     */
+    public function getServerSecurityUrl()
+    {
+        return SecParameter::find(self::SERVER_SECURITY_URL)->value;
     }
 
 }

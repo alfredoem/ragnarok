@@ -2,6 +2,8 @@
 
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
+use Illuminate\Support\Facades\Schema;
+use Illuminate\Support\Facades\DB;
 
 class CreateSecurityTables extends Migration
 {
@@ -32,19 +34,19 @@ class CreateSecurityTables extends Migration
             $table->rememberToken();
         });
 
-        DB::table('SecParameters')->insert([
-            'name' => 'API_SECURITY_URL',
-            'description' => 'URL del api servidor de seguridad',
-            //'value'       => 'http://local.ragnarok.security.com/ragnarok/api/v1'
-            'value'       => 'http://172.16.11.237/ragnarok/public/api/v1'
-        ]);
+        DB::table('SecParameters')->insert(
+            [
+                'name' => 'API_SECURITY_URL',
+                'description' => 'URL del API de seguridad',
+                'value'       => 'http://172.16.11.237/crona/public/api/v1'
+            ],
+            [
+                'name' => 'SERVER_SECURITY_URL',
+                'description' => 'URL del servidor de seguridad',
+                'value'       => 'http://172.16.11.237/crona/public'
+            ]
 
-        DB::table('SecParameters')->insert([
-            'name' => 'SERVER_SECURITY_URL',
-            'description' => 'URL del servidor de seguridad',
-            //'value'       => 'http://local.ragnarok.security.com'
-            'value'       => 'http://172.16.11.237/ragnarok/public'
-        ]);
+        );
     }
 
     public function secUsers()
@@ -72,7 +74,7 @@ class CreateSecurityTables extends Migration
 
     public function secApps()// Ragnarok
     {
-        \Schema::create('SecApps', function(Blueprint $table){
+        Schema::create('SecApps', function(Blueprint $table){
             $table->increments('appId');
             $table->string('name', 100);
             $table->text('description');
@@ -85,14 +87,15 @@ class CreateSecurityTables extends Migration
 
     public function secUserSessions()// Ragnarok
     {
-        \Schema::create('SecUserSessions', function(Blueprint $table){
-            $table->increments('appId');
+        Schema::create('SecUserSessions', function(Blueprint $table){
+            $table->increments('userSessionId');
             $table->integer('userId');
             $table->char('sessionCode', 15);
             $table->string('ipAddress', 50);
-            $table->char('status', 1);
-            $table->date('dateIns');
-            $table->dateTime('datetimeIns');
+            $table->char('status', 1)->default(1);
+            $table->date('dateIns')->default('0000-00-00');
+            $table->dateTime('datetimeIns')->default('0000-00-00 00:00:00');
+            $table->dateTime('datetimeUpd')->default('0000-00-00 00:00:00');
         });
     }
 
@@ -103,9 +106,9 @@ class CreateSecurityTables extends Migration
      */
     public function down()
     {
-        \Schema::drop('SecUsers');
-        \Schema::drop('SecParameters');
-        \Schema::drop('SecApps');
-        \Schema::drop('SecUserSessions');
+        Schema::drop('SecUsers');
+        Schema::drop('SecParameters');
+        Schema::drop('SecApps');
+        Schema::drop('SecUserSessions');
     }
 }

@@ -6,7 +6,7 @@ class SecUserSessions extends Model
 {
     protected $table = 'SecUserSessions';
     public $primaryKey = 'userSessionId';
-    protected $fillable = ['userId', 'sessionCode', 'ipAddress', 'status', 'dateIns', 'datetimeIns'];
+    protected $fillable = ['userId', 'sessionCode', 'ipAddress', 'status', 'dateIns', 'datetimeIns', 'datetimeUpd'];
     public $timestamps = false;
 
     public function user()

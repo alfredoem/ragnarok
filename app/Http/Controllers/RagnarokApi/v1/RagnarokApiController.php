@@ -6,15 +6,20 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Alfredoem\Ragnarok\Api\v1\RagnarokApi;
 use Alfredoem\Ragnarok\Utilities\EncryptAes;
-use Illuminate\Support\Facades\Auth;
 
 class RagnarokApiController extends Controller
 {
-    protected $api;
+    /**
+     * 1: security server, 2: admin application
+     * @var int
+     */
+    protected $environment = 2;
+    protected $authRagnarok;
 
-    public function __construct(RagnarokApi $api)
+    public function __construct(AuthRagnarok $authRagnarok)
     {
-        $this->api = $api;
+        $this->authRagnarok = $authRagnarok;
+
     }
 
     public function getIndex()
@@ -22,16 +27,11 @@ class RagnarokApiController extends Controller
         return trans('ragnarok.api.info');
     }
 
-
-    public function postValidUserSession(Request $request)
+    public function getValidUserSession(Request $request, $userId, $sessionCode)
     {
-        $input = $request->all();
-        $data = json_decode(
-            EncryptAes::dencrypt($input['data'])
-        );
-
-        $valid = SecUserSessions::whereuserid($data->userId)
-            ->wheresessioncode($data->sessionCode)
+        $valid = SecUserSessions::whereuserid($userId)
+            ->wheresessioncode($sessionCode)
+            ->whereipaddress($request->ip())
             ->wheredateins(date('Y-m-d'))
             ->wherestatus(1);
 
@@ -39,12 +39,14 @@ class RagnarokApiController extends Controller
 
         if ($count > 0) {
             $session = $valid->get()->last();
-            $user = AuthRagnarok::make($session->user);
-            AuthRagnarok::forget();
-            return EncryptAes::encrypt(json_encode(['success' => true, 'data' => $user]));
+            $auth = $session->user;
+            $auth->ipAddress = $session->ipAddress;
+            $auth->sessionCode = $session->sessionCode;
+            $auth->userSessionId = $session->userSessionId;
+            $auth->environment = $this->environment;
+            return EncryptAes::encrypt(json_encode(['success' => true, 'data' => $auth]));
         }
 
         return EncryptAes::encrypt(json_encode(['success' => false, 'data' => []]));
     }
-
 }
