@@ -47,20 +47,29 @@ class AuthRagnarok
      */
     public function make($user)
     {
-        $this->userId = $user->userId;
-        $this->email = $user->email;
-        $this->firstName = $user->firstName;
-        $this->lastName = $user->lastName;
-        $this->status = $user->status;
-        $this->remember_token = $user->remember_token;
-        $this->userSessionId = $user->userSessionId;
-        $this->sessionCode = $user->sessionCode;
-        $this->ipAddress = $user->ipAddress;
-        $this->environment = $user->environment;
-
+        $this->fill($user);
         Session::put(self::SESSION_NAME, $this);
-
         return Session::get(self::SESSION_NAME);
+    }
+
+    public function instance($data)
+    {
+        $this->fill($data);
+        return $this;
+    }
+
+    public function fill($data)
+    {
+        $this->userId = $data->userId;
+        $this->email = $data->email;
+        $this->firstName = $data->firstName;
+        $this->lastName = $data->lastName;
+        $this->status = $data->status;
+        $this->remember_token = $data->remember_token;
+        $this->userSessionId = $data->userSessionId;
+        $this->sessionCode = $data->sessionCode;
+        $this->ipAddress = $data->ipAddress;
+        $this->environment = $data->environment;
     }
 
     public static function forget()

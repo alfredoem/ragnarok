@@ -39,11 +39,14 @@ class RagnarokApiController extends Controller
 
         if ($count > 0) {
             $session = $valid->get()->last();
-            $auth = $session->user;
-            $auth->ipAddress = $session->ipAddress;
-            $auth->sessionCode = $session->sessionCode;
-            $auth->userSessionId = $session->userSessionId;
-            $auth->environment = $this->environment;
+            $data = $session->user;
+            $data->ipAddress = $session->ipAddress;
+            $data->sessionCode = $session->sessionCode;
+            $data->userSessionId = $session->userSessionId;
+            $data->environment = $this->environment;
+
+            $auth = $this->authRagnarok->instance($data);
+
             return EncryptAes::encrypt(json_encode(['success' => true, 'data' => $auth]));
         }
 
