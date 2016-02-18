@@ -28,10 +28,11 @@ class CreateSecurityTables extends Migration
             $table->string('description');
             $table->string('value');
             $table->integer('userIns');
-            $table->dateTime('datetimeIns');
+            $table->date('dateIns')->default('0000-00-00');
+            $table->dateTime('datetimeIns')->default('0000-00-00 00:00:00');
             $table->integer('userUpd');
-            $table->dateTime('datetimeUpd');
-            $table->rememberToken();
+            $table->date('dateUpd')->default('0000-00-00');
+            $table->dateTime('datetimeUpd')->default('0000-00-00 00:00:00');
         });
 
         DB::table('SecParameters')->insert([
@@ -57,10 +58,16 @@ class CreateSecurityTables extends Migration
             $table->string('lastName', 50);
             $table->string('firstName', 50);
             $table->char('changePassword', 1);
-            $table->dateTime('lastPasswordChange');
+            $table->dateTime('lastPasswordChange')->default('0000-00-00 00:00:00');
             $table->tinyInteger('invalidAttempts', false);
             $table->tinyInteger('status', false);
             $table->rememberToken();
+            $table->integer('userIns');
+            $table->date('dateIns')->default('0000-00-00');
+            $table->dateTime('datetimeIns')->default('0000-00-00 00:00:00');
+            $table->integer('userUpd');
+            $table->date('dateUpd')->default('0000-00-00');
+            $table->dateTime('datetimeUpd')->default('0000-00-00 00:00:00');
         });
 
         DB::table('SecUsers')->insert([
@@ -81,6 +88,12 @@ class CreateSecurityTables extends Migration
             $table->string('logo', '250');
             $table->string('url', '250');
             $table->tinyInteger('status')->unsigned();
+            $table->integer('userIns');
+            $table->date('dateIns')->default('0000-00-00');
+            $table->dateTime('datetimeIns')->default('0000-00-00 00:00:00');
+            $table->integer('userUpd');
+            $table->date('dateUpd')->default('0000-00-00');
+            $table->dateTime('datetimeUpd')->default('0000-00-00 00:00:00');
         });
     }
 
