@@ -53,6 +53,16 @@ class Install extends Command
     protected function InstallMigrations()
     {
         $fileName = '2016_01_01_000000_create_security_tables.php';
+        $defaultUser = '2014_10_12_000000_create_users_table.php';
+        $defaultResetPassword= '2014_10_12_100000_create_password_resets_table.php';
+
+        if(File::exists(database_path('migrations/' . $defaultUser))) {
+            File::delete(database_path('migrations/' . $defaultUser));
+        }
+
+        if(File::exists(database_path('migrations/' . $defaultResetPassword))) {
+            File::delete(database_path('migrations/' . $defaultResetPassword));
+        }
 
         if(File::exists(database_path('migrations/' . $fileName))) {
             File::delete(database_path('migrations/' . $fileName));
@@ -122,6 +132,7 @@ class Install extends Command
     {
         $this->line('<info>Default testing user</info>');
         $this->line('<info>admin@ragnarok.com:admin</info>');
+        $this->line('<info>Have Fun!</info>');
         $this->line('<info>✔ Feel Good Inc. </info>');
     }
 
