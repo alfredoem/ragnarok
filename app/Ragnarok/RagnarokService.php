@@ -53,12 +53,17 @@ class RagnarokService
     {
         $auth = AuthRagnarok::user();
 
-        if ($auth->environment == 1 || ( ! $this->checkConnection() && $auth->environment == 2)) {
-            $session = SecUserSessions::find($auth->userSessionId);
+        if(AuthRagnarok::check()) {
 
-            if ($session) {
-                $session->update(['status' => 0, 'datetimeUpd' => date('Y-m-d H:m:s')]);
+            if ($auth->environment == 1 || ( ! $this->checkConnection() && $auth->environment == 2)) {
+                $session = SecUserSessions::find($auth->userSessionId);
+
+                if ($session) {
+                    $session->update(['status' => 0, 'datetimeUpd' => date('Y-m-d H:m:s')]);
+                }
+
             }
+
         }
     }
 

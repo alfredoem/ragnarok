@@ -36,7 +36,7 @@ class AuthController extends Controller
     {
         $validSession = $this->serviceRagnarok->validUserSession($userId, $sessionCode);
 
-        if ($validSession->status) {
+        if ($validSession->success) {
             $data = $validSession->response->data;
             $this->userRagnarok->make($data);
             return redirect()->to('/');

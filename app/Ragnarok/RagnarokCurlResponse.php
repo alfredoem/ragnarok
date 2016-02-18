@@ -4,7 +4,7 @@ use Alfredoem\Ragnarok\Utilities\EncryptAes;
 
 class RagnarokCurlResponse
 {
-    public $status = false;
+    public $success = false;
     public $statusCode = 0;
     public $statusText = '';
     public $response;
@@ -33,12 +33,11 @@ class RagnarokCurlResponse
         }
 
         return $this;
-
     }
 
-    public function fill($status, $statusCode, $statusText, $response)
+    public function fill($success, $statusCode, $statusText, $response)
     {
-        $this->status = $status;
+        $this->success = $success;
         $this->statusCode = $statusCode;
         $this->statusText = $statusText;
         $this->response = $response;

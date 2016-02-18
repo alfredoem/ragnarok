@@ -1,10 +1,10 @@
 <?php namespace Alfredoem\Ragnarok\Http\Controllers\RagnarokApi\v1;
 
 use Alfredoem\Ragnarok\AuthRagnarok;
+use Alfredoem\Ragnarok\RagnarokResponse;
 use Alfredoem\Ragnarok\SecUsers\SecUserSessions;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
-use Alfredoem\Ragnarok\Api\v1\RagnarokApi;
 use Alfredoem\Ragnarok\Utilities\EncryptAes;
 
 class RagnarokApiController extends Controller
@@ -15,11 +15,14 @@ class RagnarokApiController extends Controller
      */
     protected $environment = 2;
     protected $authRagnarok;
+    protected $responseRagnarok;
+    protected $responseSuccess = false;
+    protected $responseData;
 
-    public function __construct(AuthRagnarok $authRagnarok)
+    public function __construct(AuthRagnarok $authRagnarok, RagnarokResponse $responseRagnarok)
     {
+        $this->responseRagnarok = $responseRagnarok;
         $this->authRagnarok = $authRagnarok;
-
     }
 
     public function getIndex()
@@ -29,27 +32,34 @@ class RagnarokApiController extends Controller
 
     public function getValidUserSession(Request $request, $userId, $sessionCode)
     {
-        $valid = SecUserSessions::whereuserid($userId)
+        $session = SecUserSessions::whereuserid($userId)
             ->wheresessioncode($sessionCode)
-            ->whereipaddress($request->ip())
             ->wheredateins(date('Y-m-d'))
-            ->wherestatus(1);
+            ->wherestatus(1)
+            ->first();
 
-        $count = $valid->count();
+        $ipAddress = $request->ip();
 
-        if ($count > 0) {
-            $session = $valid->get()->last();
-            $data = $session->user;
-            $data->ipAddress = $session->ipAddress;
-            $data->sessionCode = $session->sessionCode;
-            $data->userSessionId = $session->userSessionId;
-            $data->environment = $this->environment;
+        if ($session) {
 
-            $auth = $this->authRagnarok->instance($data);
+            if ($session->datetimeUpd < date('Y-m-d H:m:s')) {
+                $session->update(['ipAddress' => $ipAddress, 'datetimeUpd' => date('Y-m-d H:m:s')]);
+            }
 
-            return EncryptAes::encrypt(json_encode(['success' => true, 'data' => $auth]));
+            if ($session->datetimeUpd < date('Y-m-d H:m:s') || $session->ipAddress == $ipAddress) {
+
+                $data = $session->user;
+                $data->ipAddress = $ipAddress;
+                $data->sessionCode = $session->sessionCode;
+                $data->userSessionId = $session->userSessionId;
+                $data->environment = $this->environment;
+
+                $this->responseData = $this->authRagnarok->instance($data);
+                $this->responseSuccess = true;
+            }
+
         }
 
-        return EncryptAes::encrypt(json_encode(['success' => false, 'data' => []]));
+        return EncryptAes::encrypt(json_encode($this->responseRagnarok->make($this->responseSuccess, $this->responseData)));
     }
 }
