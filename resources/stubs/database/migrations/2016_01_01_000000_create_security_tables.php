@@ -95,6 +95,25 @@ class CreateSecurityTables extends Migration
             $table->date('dateUpd')->default('0000-00-00');
             $table->dateTime('datetimeUpd')->default('0000-00-00 00:00:00');
         });
+
+        DB::table('SecApps')->insert([
+            [
+                'name' => 'Admin App',
+                'description' => 'Lorem ipsum dolor sit amet',
+                'type' => 1,
+                'logo' => 'meteor-logo.png',
+                'url' => 'http://local.admin.app.com',
+                'status' => 1
+            ],
+            [
+                'name' => 'Admin App',
+                'description' => 'Lorem ipsum dolor sit amet',
+                'type' => 1,
+                'logo' => 'meteor-logo.png',
+                'url' => 'http://172.16.11.237/admin-application/public',
+                'status' => 1
+            ]
+        ]);
     }
 
     public function secUserSessions()// Ragnarok
