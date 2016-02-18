@@ -34,7 +34,7 @@ class CreateSecurityTables extends Migration
             $table->rememberToken();
         });
 
-        DB::table('SecParameters')->insert(
+        DB::table('SecParameters')->insert([
             [
                 'name' => 'API_SECURITY_URL',
                 'description' => 'URL del API de seguridad',
@@ -45,8 +45,7 @@ class CreateSecurityTables extends Migration
                 'description' => 'URL del servidor de seguridad',
                 'value'       => 'http://172.16.11.237/crona/public'
             ]
-
-        );
+        ]);
     }
 
     public function secUsers()
