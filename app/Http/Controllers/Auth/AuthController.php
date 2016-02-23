@@ -1,7 +1,11 @@
-<?php namespace Alfredoem\Ragnarok\Http\Controllers\Auth;
+<?php
+
+namespace Alfredoem\Ragnarok\Http\Controllers\Auth;
 
 use Alfredoem\Ragnarok\AuthRagnarok;
 use Alfredoem\Ragnarok\Http\Requests\LoginRequest;
+use Alfredoem\Ragnarok\RagnarokParameter;
+use Alfredoem\Ragnarok\SecParameters\SecParameter;
 use App\Http\Controllers\Controller;
 use Illuminate\Foundation\Auth\ThrottlesLogins;
 use Illuminate\Foundation\Auth\AuthenticatesAndRegistersUsers;
@@ -19,16 +23,28 @@ class AuthController extends Controller
     protected $redirectAfterLogout = '/auth/login';
     protected $userRagnarok;
     protected $serviceRagnarok;
+    protected $maxLoginAttempts;
+    protected $paramRagnarok;
+
     /**
      * 1: security server, 2: admin application
      * @var int
      */
     protected $environment = 1;
 
-    public function __construct(AuthRagnarok $userRagnarok, RagnarokService $serviceRagnarok)
+    /**
+     * AuthController constructor.
+     * @param AuthRagnarok $userRagnarok
+     * @param RagnarokService $serviceRagnarok
+     * @param RagnarokParameter $paramRagnarok
+     */
+    public function __construct(AuthRagnarok $userRagnarok,
+                                RagnarokService $serviceRagnarok,
+                                RagnarokParameter $paramRagnarok)
     {
         $this->userRagnarok = $userRagnarok;
         $this->serviceRagnarok = $serviceRagnarok;
+        $this->paramRagnarok = $paramRagnarok;
         $this->middleware('guest', ['except' => ['getLogout', 'getVerify']]);
     }
 
@@ -47,7 +63,7 @@ class AuthController extends Controller
 
     public function getLogin()
     {
-        $serverUrl =  $this->serviceRagnarok->getServerSecurityUrl();
+        $serverUrl =  $this->paramRagnarok->retrieve(SecParameter::SERVER_SECURITY_URL);
 
         if ($serverUrl != url('/')) {
 
@@ -65,6 +81,8 @@ class AuthController extends Controller
 
     public function postLogin(LoginRequest $request)
     {
+        $this->maxLoginAttempts = $this->paramRagnarok->retrieve(SecParameter::MAX_LOGIN_ATTEMPTS);
+
         $request->merge(['ipAddress' => $request->ip()]);
 
         $login = $this->serviceRagnarok->login($request->all());

@@ -1,10 +1,16 @@
-<?php namespace Alfredoem\Ragnarok;
+<?php
 
+namespace Alfredoem\Ragnarok;
+
+use Alfredoem\Ragnarok\Environment\EnvironmentInterface;
+use Alfredoem\Ragnarok\Environment\EnvironmentTrait;
 use Illuminate\Support\Facades\Session;
 
-class AuthRagnarok
+class AuthRagnarok implements EnvironmentInterface
 {
-    const SESSION_NAME = 'Crona$user';
+    use EnvironmentTrait;
+
+    const ENVIRONMENT_NAME = 'Crona$user';
 
     public $userId = '';
     public $email = '';
@@ -18,25 +24,16 @@ class AuthRagnarok
     public $environment = 0;
 
     /**
-     * @return bool
+     * Return one attribute of Session Object
+     * @param $name
+     * @return string|null
      */
-    public static function check()
+    public function retrieve($name)
     {
-        if (Session::has(self::SESSION_NAME)) {
-            return true;
-        }
+        $RagnarokUser = Session::get(self::ENVIRONMENT_NAME);
 
-        Session::forget(self::SESSION_NAME);
-        return false;
-    }
-
-    /**
-     * @return \Alfredoem\Ragnarok\AuthRagnarok
-     */
-    public static function user()
-    {
-        if (self::check()) {
-            return Session::get(self::SESSION_NAME);
+        if (property_exists($RagnarokUser, $name)) {
+            return $RagnarokUser->$name;
         }
 
         return null;
@@ -45,11 +42,19 @@ class AuthRagnarok
     /**
      * @return \Alfredoem\Ragnarok\AuthRagnarok
      */
+    public static function user()
+    {
+        return self::retrieveAll();
+    }
+
+    /**
+     * @return \Alfredoem\Ragnarok\AuthRagnarok
+     */
     public function make($user)
     {
         $this->fill($user);
-        Session::put(self::SESSION_NAME, $this);
-        return Session::get(self::SESSION_NAME);
+        Session::put(self::ENVIRONMENT_NAME, $this);
+        return Session::get(self::ENVIRONMENT_NAME);
     }
 
     public function instance($data)
@@ -71,10 +76,4 @@ class AuthRagnarok
         $this->ipAddress = $data->ipAddress;
         $this->environment = $data->environment;
     }
-
-    public static function forget()
-    {
-        Session::forget(self::SESSION_NAME);
-    }
-
 }

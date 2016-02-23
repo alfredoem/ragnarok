@@ -1,4 +1,6 @@
-<?php namespace Alfredoem\Ragnarok;
+<?php
+
+namespace Alfredoem\Ragnarok;
 
 use Alfredoem\Ragnarok\SecParameters\SecParameter;
 use Alfredoem\Ragnarok\Api\v1\RagnarokApi;
@@ -6,15 +8,22 @@ use Alfredoem\Ragnarok\SecUsers\SecUserSessions;
 
 class RagnarokService
 {
-    const API_SECURITY_URL = 1;
-    const SERVER_SECURITY_URL = 2;
-
     protected $curlRagnarok;
+    protected $paramRagnarok;
 
-    public function __construct(RagnarokCurl $curlRagnarok, RagnarokApi $apiRagnarok)
+    /**
+     * RagnarokService constructor.
+     * @param RagnarokCurl $curlRagnarok
+     * @param RagnarokApi $apiRagnarok
+     * @param RagnarokParameter $paramRagnarok
+     */
+    public function __construct(RagnarokCurl $curlRagnarok,
+                                RagnarokApi $apiRagnarok,
+                                RagnarokParameter $paramRagnarok)
     {
         $this->apiRagnarok = $apiRagnarok;
         $this->curlRagnarok = $curlRagnarok;
+        $this->paramRagnarok = $paramRagnarok;
     }
 
     /**
@@ -31,7 +40,7 @@ class RagnarokService
      */
     public function checkConnection()
     {
-        $serverUrl = $this->getServerSecurityUrl();
+        $serverUrl = $this->paramRagnarok->retrieve(SecParameter::SERVER_SECURITY_URL);
         return $this->curlRagnarok->httpStatusConnection($serverUrl);
     }
 
@@ -42,10 +51,9 @@ class RagnarokService
      */
     public function validUserSession($userId, $sessionCode)
     {
-        $url = $this->getAPISecurityUrl('valid-user-session', [$userId, $sessionCode]);
-
-        $response = $this->curlRagnarok->httpGetRequest($url);
-
+        $url = $this->paramRagnarok->retrieve(SecParameter::API_SECURITY_URL);
+        $uri = "{$url}/valid-user-session/{$userId}/{$sessionCode}";
+        $response = $this->curlRagnarok->httpGetRequest($uri);
         return $response;
     }
 
@@ -66,36 +74,4 @@ class RagnarokService
 
         }
     }
-
-    /**
-     * @param string $method
-     * @param array $parameters
-     * @return string
-     */
-    public function getAPISecurityUrl($method = '', $parameters = array())
-    {
-        $url = SecParameter::find(self::API_SECURITY_URL)->value;
-
-        if ($method) {
-            $url .= "/{$method}";
-
-            if ( ! empty($parameters)) {
-                foreach ($parameters as $param) {
-                    $url .= "/{$param}";
-                }
-            }
-
-        }
-
-        return $url;
-    }
-
-    /**
-     * @return string
-     */
-    public function getServerSecurityUrl()
-    {
-        return SecParameter::find(self::SERVER_SECURITY_URL)->value;
-    }
-
 }
