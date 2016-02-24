@@ -224,7 +224,7 @@ class CreateSecurityTables extends Migration
     public function secLogActions()
     {
         Schema::create('SecLogActions', function(Blueprint $table){
-           $table->increments('actionLogId');
+           $table->increments('logId');
            $table->unsignedInteger('appId')->default(0);
            $table->unsignedInteger('userId')->default(0);
            $table->unsignedInteger('menuId')->default(0);
