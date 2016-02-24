@@ -2,6 +2,7 @@
 
 namespace Alfredoem\Ragnarok\Http\Controllers\Auth;
 
+use Alfredoem\Ragnarok\Events\LoginAttemptEvent;
 use Alfredoem\Ragnarok\Soul\AuthRagnarok;
 use Alfredoem\Ragnarok\Http\Requests\LoginRequest;
 use Alfredoem\Ragnarok\Soul\RagnarokParameter;
@@ -108,12 +109,18 @@ class AuthController extends Controller
         }
 
         if ($login->success) {
+            // It will be used for external events call
+            // event('login.success', [AuthRagnarok::user()]);
+
+            // Use this way for internal event call
+            event(new LoginAttemptEvent(AuthRagnarok::user()));
             return $this->handleUserWasAuthenticated($request, $throttles);
         }
 
         if ($throttles) {
             $this->incrementLoginAttempts($request);
         }
+
 
         return redirect($this->loginPath())
             ->withInput($request->only($this->loginUsername(), 'remember'))

@@ -5,6 +5,8 @@
  * @author Alfredo Espiritu <alfredo.espiritu.m@gmail.com>
  */
 
+use Alfredoem\Ragnarok\Listeners\RagnarokListener;
+use Illuminate\Support\Facades\Event;
 use Illuminate\Support\ServiceProvider;
 use Alfredoem\Ragnarok\Console\Install;
 
@@ -22,6 +24,8 @@ class RagnarokServiceProvider extends ServiceProvider
         $this->defineViews();
         $this->defineAssets();
         $this->defineLanguages();
+        $this->defineListeners();
+
     }
 
     protected function defineRoutes()
@@ -60,6 +64,11 @@ class RagnarokServiceProvider extends ServiceProvider
         $this->publishes([
             RAGNAROK.'/public/css' => public_path('css/alfredoem/ragnarok/'),
         ], 'public');
+    }
+
+    public function defineListeners()
+    {
+        Event::subscribe(new RagnarokListener);
     }
 
     public function register()
