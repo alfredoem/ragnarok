@@ -23,7 +23,8 @@ class CreateSecurityTables extends Migration
         $this->secRoleMenus();
         $this->secRoleUsers();
         $this->secActions();
-        $this->secActionsLog();
+        $this->secLogActions();
+        $this->SecLogLoginAttempts();
     }
 
     public function secParameters()
@@ -220,9 +221,9 @@ class CreateSecurityTables extends Migration
         });
     }
 
-    public function secActionsLog()
+    public function secLogActions()
     {
-        Schema::create('SecActionsLog', function(Blueprint $table){
+        Schema::create('SecLogActions', function(Blueprint $table){
            $table->increments('actionLogId');
            $table->unsignedInteger('appId')->default(0);
            $table->unsignedInteger('userId')->default(0);
@@ -234,9 +235,27 @@ class CreateSecurityTables extends Migration
            $table->tinyInteger('actionResult');
            $table->date('logDate')->default('0000-00-00');
            $table->unsignedSmallInteger('logDateYear')->default(0);
-           $table->unsignedSmallInteger('logDateMonth')->default(0);
-           $table->unsignedSmallInteger('logDateHour')->default(0);
+           $table->unsignedTinyInteger('logDateMonth')->default(0);
+           $table->unsignedTinyInteger('logDateHour')->default(0);
            $table->datetime('logDatetime')->default('0000-00-00 00:00:00');
+        });
+    }
+
+    public function secLogLoginAttempts()
+    {
+        Schema::create('SecLogLoginAttempt', function (Blueprint $table) {
+            $table->increments('logId');
+            $table->char('email', 50);
+            $table->unsignedInteger('userId')->default(0);
+            $table->char('ipAddress', 50)->default('');
+            $table->unsignedTinyInteger('invalidAttempts')->default(0);
+            $table->unsignedInteger('userStatus')->default(0);
+            $table->tinyInteger('loginResult')->default(0);
+            $table->date('logDate')->default('0000-00-00');
+            $table->unsignedSmallInteger('logDateYear')->default(0);
+            $table->unsignedTinyInteger('logDateMonth')->default(0);
+            $table->unsignedTinyInteger('logDateHour')->default(0);
+            $table->datetime('logDatetime')->default('0000-00-00 00:00:00');
         });
     }
 
@@ -256,6 +275,7 @@ class CreateSecurityTables extends Migration
         Schema::drop('SecRoleMenus');
         Schema::drop('SecRoleUsers');
         Schema::drop('SecActions');
-        Schema::drop('SecActionsLog');
+        Schema::drop('SecLogActions');
+        Schema::drop('SecLogLoginAttempt');
     }
 }
