@@ -1,10 +1,12 @@
-<?php namespace Alfredoem\Ragnarok\Api\v1;
+<?php
 
-use Alfredoem\Ragnarok\Utilities\Make;
+namespace Alfredoem\Ragnarok\Api\v1;
+
+use Alfredoem\Ragnarok\Support\Make;
 use Illuminate\Support\Facades\Auth;
 use Alfredoem\Ragnarok\SecUsers\SecUserSessions;
-use Alfredoem\Ragnarok\AuthRagnarok;
-use Alfredoem\Ragnarok\RagnarokResponse;
+use Alfredoem\Ragnarok\Soul\AuthRagnarok;
+use Alfredoem\Ragnarok\Soul\RagnarokResponse;
 use Illuminate\Support\Facades\Session;
 
 class RagnarokApi
@@ -21,7 +23,7 @@ class RagnarokApi
 
     /**
      * @param $data
-     * @return \Alfredoem\Ragnarok\RagnarokResponse
+     * @return \Alfredoem\Ragnarok\Soul\RagnarokResponse
      */
 
     public function login($data)
