@@ -1,11 +1,11 @@
 <?php namespace Alfredoem\Ragnarok\Http\Controllers\RagnarokApi\v1;
 
-use Alfredoem\Ragnarok\AuthRagnarok;
-use Alfredoem\Ragnarok\RagnarokResponse;
+use Alfredoem\Ragnarok\Soul\AuthRagnarok;
+use Alfredoem\Ragnarok\Soul\RagnarokResponse;
 use Alfredoem\Ragnarok\SecUsers\SecUserSessions;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
-use Alfredoem\Ragnarok\Utilities\EncryptAes;
+use Alfredoem\Ragnarok\Support\EncryptAes;
 
 class RagnarokApiController extends Controller
 {
@@ -30,6 +30,13 @@ class RagnarokApiController extends Controller
         return trans('ragnarok.api.info');
     }
 
+    /**
+     * Check if the user have a active session
+     * @param Request $request
+     * @param $userId
+     * @param $sessionCode
+     * @return string
+     */
     public function getValidUserSession(Request $request, $userId, $sessionCode)
     {
         $session = SecUserSessions::whereuserid($userId)

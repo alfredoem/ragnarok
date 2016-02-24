@@ -1,4 +1,6 @@
-<?php namespace Alfredoem\Ragnarok;
+<?php
+
+namespace Alfredoem\Ragnarok\Soul;
 
 
 class RagnarokResponse

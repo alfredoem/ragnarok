@@ -1,8 +1,8 @@
-<?php namespace Alfredoem\Ragnarok;
+<?php
 
+namespace Alfredoem\Ragnarok\Soul;
 
-use Alfredoem\Ragnarok\Utilities\EncryptAes;
-use Alfredoem\Ragnarok\RagnarokCurlResponse;
+use Alfredoem\Ragnarok\Support\EncryptAes;
 
 class RagnarokCurl
 {
@@ -15,8 +15,9 @@ class RagnarokCurl
     }
 
     /**
+     * Make a GET HTTP request
      * @param $url
-     * @return \Alfredoem\Ragnarok\RagnarokCurlResponse
+     * @return \Alfredoem\Ragnarok\Soul\RagnarokCurlResponse
      */
     public function httpGetRequest($url)
     {
@@ -40,6 +41,7 @@ class RagnarokCurl
     }
 
     /**
+     * Check the connection status
      * @param $url
      * @return bool
      */
@@ -60,9 +62,10 @@ class RagnarokCurl
     }
 
     /**
+     * Make a POST HTTP request
      * @param $url
      * @param $data
-     * @return \Alfredoem\Ragnarok\RagnarokCurlResponse
+     * @return \Alfredoem\Ragnarok\Soul\RagnarokCurlResponse
      */
     public function httpPosRequest($url, $data)
     {

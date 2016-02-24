@@ -1,6 +1,8 @@
-<?php namespace Alfredoem\Ragnarok;
+<?php
 
-use Alfredoem\Ragnarok\Utilities\EncryptAes;
+namespace Alfredoem\Ragnarok\Soul;
+
+use Alfredoem\Ragnarok\Support\EncryptAes;
 
 class RagnarokCurlResponse
 {
@@ -9,6 +11,12 @@ class RagnarokCurlResponse
     public $statusText = '';
     public $response;
 
+    /**
+     * Handle the curl response
+     * @param $curl
+     * @param $response
+     * @return $this
+     */
     public function resolve($curl, $response)
     {
         $http_status = curl_getinfo($curl, CURLINFO_HTTP_CODE);
@@ -35,6 +43,13 @@ class RagnarokCurlResponse
         return $this;
     }
 
+    /**
+     * Fill the CurlResponse attributes
+     * @param $success
+     * @param $statusCode
+     * @param $statusText
+     * @param $response
+     */
     public function fill($success, $statusCode, $statusText, $response)
     {
         $this->success = $success;

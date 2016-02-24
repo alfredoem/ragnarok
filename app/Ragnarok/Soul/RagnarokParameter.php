@@ -1,6 +1,6 @@
 <?php
 
-namespace Alfredoem\Ragnarok;
+namespace Alfredoem\Ragnarok\Soul;
 
 use Alfredoem\Ragnarok\Environment\EnvironmentInterface;
 use Alfredoem\Ragnarok\Environment\EnvironmentTrait;
@@ -16,19 +16,15 @@ class RagnarokParameter implements EnvironmentInterface
 
     public $SecParameter;
 
-    /**
-     * RagnarokParameter constructor.
-     * @param SecParameter $SecParameter
-     */
     public function __construct(SecParameter $SecParameter)
     {
         $this->SecParameter = $SecParameter;
     }
 
     /**
-     * Return one attribute of Session Object
+     * Get value of a RagnarokParameter attribute
      * @param $name
-     * @return string
+     * @return mixed
      */
     public function retrieve($name)
     {

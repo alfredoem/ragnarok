@@ -1,6 +1,6 @@
 <?php
 
-namespace Alfredoem\Ragnarok;
+namespace Alfredoem\Ragnarok\Soul;
 
 use Alfredoem\Ragnarok\Environment\EnvironmentInterface;
 use Alfredoem\Ragnarok\Environment\EnvironmentTrait;
@@ -24,7 +24,7 @@ class AuthRagnarok implements EnvironmentInterface
     public $environment = 0;
 
     /**
-     * Return one attribute of Session Object
+     * Get User Session Object attribute
      * @param $name
      * @return string|null
      */
@@ -40,7 +40,8 @@ class AuthRagnarok implements EnvironmentInterface
     }
 
     /**
-     * @return \Alfredoem\Ragnarok\AuthRagnarok
+     * Get User Session Object
+     * @return \Alfredoem\Ragnarok\Soul\AuthRagnarok
      */
     public static function user()
     {
@@ -48,7 +49,8 @@ class AuthRagnarok implements EnvironmentInterface
     }
 
     /**
-     * @return \Alfredoem\Ragnarok\AuthRagnarok
+     * Make User Session Object
+     * @return \Alfredoem\Ragnarok\Soul\AuthRagnarok
      */
     public function make($user)
     {
@@ -57,12 +59,21 @@ class AuthRagnarok implements EnvironmentInterface
         return Session::get(self::ENVIRONMENT_NAME);
     }
 
+    /**
+     * Get a new instance of the User
+     * @param $data
+     * @return $this
+     */
     public function instance($data)
     {
         $this->fill($data);
         return $this;
     }
 
+    /**
+     * Fill the user attributes
+     * @param $data
+     */
     public function fill($data)
     {
         $this->userId = $data->userId;

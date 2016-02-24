@@ -1,6 +1,6 @@
 <?php
 
-namespace Alfredoem\Ragnarok;
+namespace Alfredoem\Ragnarok\Soul;
 
 use Alfredoem\Ragnarok\SecParameters\SecParameter;
 use Alfredoem\Ragnarok\Api\v1\RagnarokApi;

@@ -1,6 +1,6 @@
 <?php namespace App\Http\Middleware;
 
-use Alfredoem\Ragnarok\AuthRagnarok;
+use Alfredoem\Ragnarok\Soul\AuthRagnarok;
 use Closure;
 
 class Authenticate

@@ -1,7 +1,12 @@
-<?php namespace Alfredoem\Ragnarok\Utilities;
+<?php namespace Alfredoem\Ragnarok\Support;
 
 class Make
 {
+    /**
+     * Convert array to object
+     * @param $array
+     * @return \stdClass
+     */
     public static function arrayToObject($array)
     {
         $obj = new \stdClass;
@@ -17,6 +22,10 @@ class Make
         return $obj;
     }
 
+    /**
+     * Return unique string
+     * @return string
+     */
     public static function uniqueString()// Return a unique string
     {
         return $customId = strtoupper(uniqid()) . rand(0, 20);

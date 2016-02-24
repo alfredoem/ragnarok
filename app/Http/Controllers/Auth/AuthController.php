@@ -2,16 +2,16 @@
 
 namespace Alfredoem\Ragnarok\Http\Controllers\Auth;
 
-use Alfredoem\Ragnarok\AuthRagnarok;
+use Alfredoem\Ragnarok\Soul\AuthRagnarok;
 use Alfredoem\Ragnarok\Http\Requests\LoginRequest;
-use Alfredoem\Ragnarok\RagnarokParameter;
+use Alfredoem\Ragnarok\Soul\RagnarokParameter;
 use Alfredoem\Ragnarok\SecParameters\SecParameter;
 use App\Http\Controllers\Controller;
 use Illuminate\Foundation\Auth\ThrottlesLogins;
 use Illuminate\Foundation\Auth\AuthenticatesAndRegistersUsers;
 use Illuminate\Http\Request;
 
-use Alfredoem\Ragnarok\RagnarokService;
+use Alfredoem\Ragnarok\Soul\RagnarokService;
 use Illuminate\Support\Facades\Session;
 
 class AuthController extends Controller
@@ -27,6 +27,7 @@ class AuthController extends Controller
     protected $paramRagnarok;
 
     /**
+     * Determina en que entorno se esta ejecutando el componente
      * 1: security server, 2: admin application
      * @var int
      */
@@ -48,6 +49,12 @@ class AuthController extends Controller
         $this->middleware('guest', ['except' => ['getLogout', 'getVerify']]);
     }
 
+    /**
+     * Check if the user have a active session
+     * @param $userId
+     * @param $sessionCode
+     * @return \Illuminate\Http\RedirectResponse|\Illuminate\Routing\Redirector
+     */
     public function getVerify($userId, $sessionCode)
     {
         $validSession = $this->serviceRagnarok->validUserSession($userId, $sessionCode);
@@ -61,6 +68,9 @@ class AuthController extends Controller
         return $this->getLogout();
     }
 
+    /**
+     * @return \Illuminate\Contracts\View\Factory|\Illuminate\Http\RedirectResponse|\Illuminate\View\View
+     */
     public function getLogin()
     {
         $serverUrl =  $this->paramRagnarok->retrieve(SecParameter::SERVER_SECURITY_URL);
@@ -79,6 +89,10 @@ class AuthController extends Controller
         return view('Ragnarok::auth.authenticate');
     }
 
+    /**
+     * @param LoginRequest $request
+     * @return $this|\Illuminate\Http\RedirectResponse|\Illuminate\Http\Response
+     */
     public function postLogin(LoginRequest $request)
     {
         $this->maxLoginAttempts = $this->paramRagnarok->retrieve(SecParameter::MAX_LOGIN_ATTEMPTS);
@@ -108,6 +122,9 @@ class AuthController extends Controller
             ]);
     }
 
+    /**
+     * @return \Illuminate\Http\RedirectResponse|\Illuminate\Routing\Redirector
+     */
     public function getLogout()
     {
         $this->serviceRagnarok->forgetUserSession();

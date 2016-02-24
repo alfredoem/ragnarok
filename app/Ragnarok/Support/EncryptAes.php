@@ -1,4 +1,4 @@
-<?php namespace Alfredoem\Ragnarok\Utilities;
+<?php namespace Alfredoem\Ragnarok\Support;
 
 class EncryptAes
 {
