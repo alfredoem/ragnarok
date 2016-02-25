@@ -25,6 +25,7 @@ class RagnarokServiceProvider extends ServiceProvider
         $this->defineAssets();
         $this->defineLanguages();
         $this->defineListeners();
+        $this->defineHelpers();
 
     }
 
@@ -62,13 +63,21 @@ class RagnarokServiceProvider extends ServiceProvider
     public function defineAssets()
     {
         $this->publishes([
-            RAGNAROK.'/public/css' => public_path('css/alfredoem/ragnarok/'),
+            RAGNAROK .'/public/css' => public_path('css/alfredoem/ragnarok/'),
         ], 'public');
     }
 
     public function defineListeners()
     {
         Event::subscribe(new RagnarokListener);
+    }
+
+    public function defineHelpers()
+    {
+        if (file_exists($file = RAGNAROK . '/app/Support/helpers.php'))
+        {
+            require $file;
+        }
     }
 
     public function register()
