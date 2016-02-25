@@ -11,7 +11,7 @@ class SecUserSessions extends Model
 
     public function user()
     {
-        return $this->hasOne('Alfredoem\Ragnarok\SecUsers\SecUser', 'userId', 'userId');
+        return $this->hasOne(SecUser::class, 'userId', 'userId');
     }
 
 }

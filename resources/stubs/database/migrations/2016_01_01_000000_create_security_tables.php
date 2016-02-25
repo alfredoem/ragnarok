@@ -34,10 +34,10 @@ class CreateSecurityTables extends Migration
             $table->string('name', 50);
             $table->string('description');
             $table->string('value');
-            $table->unsignedInteger('userIns');
+            $table->unsignedInteger('userIns')->default(0);
             $table->date('dateIns')->default('0000-00-00');
             $table->dateTime('datetimeIns')->default('0000-00-00 00:00:00');
-            $table->unsignedInteger('userUpd');
+            $table->unsignedInteger('userUpd')->default(0);
             $table->date('dateUpd')->default('0000-00-00');
             $table->dateTime('datetimeUpd')->default('0000-00-00 00:00:00');
         });
@@ -45,13 +45,13 @@ class CreateSecurityTables extends Migration
         DB::table('SecParameters')->insert([
             [
                 'name' => 'API_SECURITY_URL',
-                'description' => 'Security API url',
-                'value'       => 'http://172.16.11.237/crona/public/api/v1'
+                'description' => 'The security API url',
+                'value'       => 'http://local.admin.security.com/api/v1'
             ],
             [
                 'name' => 'SERVER_SECURITY_URL',
-                'description' => 'Security SERVER url',
-                'value'       => 'http://172.16.11.237/crona/public'
+                'description' => 'The security server url',
+                'value'       => 'http://local.admin.security.com'
             ],
             [
                 'name' => 'MAX_LOGIN_ATTEMPTS',
@@ -74,27 +74,27 @@ class CreateSecurityTables extends Migration
             $table->unsignedTinyInteger('invalidAttempts', false);
             $table->unsignedTinyInteger('status', false);
             $table->rememberToken();
-            $table->unsignedInteger('userIns');
+            $table->unsignedInteger('userIns')->default(0);
             $table->date('dateIns')->default('0000-00-00');
             $table->dateTime('datetimeIns')->default('0000-00-00 00:00:00');
-            $table->unsignedInteger('userUpd');
+            $table->unsignedInteger('userUpd')->default(0);
             $table->date('dateUpd')->default('0000-00-00');
             $table->dateTime('datetimeUpd')->default('0000-00-00 00:00:00');
         });
 
         DB::table('SecUsers')->insert([
             [
+                'firstName' => 'Yitan',
+                'lastName'  => 'Tribal',
+                'email' => 'admin@security.com',
+                'password' => bcrypt('admin'),
+            ],
+            [
                 'firstName' => 'Cloud',
                 'lastName'  => 'Strife',
                 'email' => 'admin@ragnarok.com',
                 'password' => bcrypt('admin'),
             ],
-            [
-                'firstName' => 'Yitan',
-                'lastName'  => 'Tribal',
-                'email' => 'admin@security.com',
-                'password' => bcrypt('admin'),
-            ]
         ]);
     }
 
@@ -108,15 +108,23 @@ class CreateSecurityTables extends Migration
             $table->string('logo', '250');
             $table->string('url', '250');
             $table->unsignedTinyInteger('status');
-            $table->unsignedInteger('userIns');
+            $table->unsignedInteger('userIns')->default(0);
             $table->date('dateIns')->default('0000-00-00');
             $table->dateTime('datetimeIns')->default('0000-00-00 00:00:00');
-            $table->unsignedInteger('userUpd');
+            $table->unsignedInteger('userUpd')->default(0);
             $table->date('dateUpd')->default('0000-00-00');
             $table->dateTime('datetimeUpd')->default('0000-00-00 00:00:00');
         });
 
         DB::table('SecApps')->insert([
+            [
+                'name' => 'Security Backend',
+                'description' => 'Lorem ipsum dolor sit amet',
+                'type' => 1,
+                'logo' => 'meteor-logo.png',
+                'url' => 'http://local.admin.security.com',
+                'status' => 1
+            ],
             [
                 'name' => 'Admin App',
                 'description' => 'Lorem ipsum dolor sit amet',
@@ -133,14 +141,6 @@ class CreateSecurityTables extends Migration
                 'url' => 'http://172.16.11.237/admin-application/public',
                 'status' => 1
             ],
-            [
-                'name' => 'Security Backend',
-                'description' => 'Lorem ipsum dolor sit amet',
-                'type' => 1,
-                'logo' => 'meteor-logo.png',
-                'url' => 'http://local.admin.security.com',
-                'status' => 1
-            ]
         ]);
     }
 
@@ -172,13 +172,64 @@ class CreateSecurityTables extends Migration
             $table->string('icon', 100);
             $table->string('route', 500);
             $table->unsignedTinyInteger('status')->default(1);
-            $table->unsignedInteger('userIns');
+            $table->unsignedInteger('userIns')->default(0);
             $table->date('dateIns')->default('0000-00-00');
             $table->dateTime('datetimeIns')->default('0000-00-00 00:00:00');
-            $table->unsignedInteger('userUpd');
+            $table->unsignedInteger('userUpd')->default(0);
             $table->date('dateUpd')->default('0000-00-00');
             $table->dateTime('datetimeUpd')->default('0000-00-00 00:00:00');
         });
+
+        DB::table('SecMenus')->insert([
+            [
+                'menuParentId' => 0,
+                'appId' => 1,
+                'isChild' => 0,
+                'name' => 'Security',
+                'description' => 'Lorem ipsum dolor set amet',
+                'position' => 1,
+                'division' => '',
+                'icon' => 'fa-shield',
+                'route' => '',
+                'status' => 1
+            ],
+            [
+                'menuParentId' => 1,
+                'appId' => 1,
+                'isChild' => 1,
+                'name' => 'Menus',
+                'description' => 'Lorem ipsum dolor set amet',
+                'position' => 2,
+                'division' => '',
+                'icon' => '',
+                'route' => '',
+                'status' => 1
+            ],
+            [
+                'menuParentId' => 1,
+                'appId' => 1,
+                'isChild' => 1,
+                'name' => 'Profiles',
+                'description' => 'Lorem ipsum dolor set amet',
+                'position' => 3,
+                'division' => '',
+                'icon' => '',
+                'route' => '',
+                'status' => 1
+            ],
+            [
+                'menuParentId' => 1,
+                'appId' => 1,
+                'isChild' => 1,
+                'name' => 'Users',
+                'description' => 'Lorem ipsum dolor set amet',
+                'position' => 4,
+                'division' => '',
+                'icon' => '',
+                'route' => '',
+                'status' => 1
+            ],
+        ]);
     }
 
     public function secRoles()
@@ -190,13 +241,22 @@ class CreateSecurityTables extends Migration
             $table->text('description');
             $table->unsignedTinyInteger('level');
             $table->unsignedTinyInteger('status')->default(1);
-            $table->unsignedInteger('userIns');
+            $table->unsignedInteger('userIns')->default(0);
             $table->date('dateIns')->default('0000-00-00');
             $table->dateTime('datetimeIns')->default('0000-00-00 00:00:00');
-            $table->unsignedInteger('userUpd');
+            $table->unsignedInteger('userUpd')->default(0);
             $table->date('dateUpd')->default('0000-00-00');
             $table->dateTime('datetimeUpd')->default('0000-00-00 00:00:00');
         });
+
+        DB::table('SecRoles')->insert([
+           [
+               'appId' => 1,
+               'name'  => 'Shinigami',
+               'description' => 'Lorem ipsum dolor sit amet',
+               'level' => 0,
+           ]
+        ]);
     }
 
     public function secRoleMenus()
@@ -205,10 +265,10 @@ class CreateSecurityTables extends Migration
             $table->unsignedInteger('roleId');
             $table->unsignedInteger('menuId');
             $table->unsignedTinyInteger('status');
-            $table->unsignedInteger('userIns');
+            $table->unsignedInteger('userIns')->default(0);
             $table->date('dateIns')->default('0000-00-00');
             $table->dateTime('datetimeIns')->default('0000-00-00 00:00:00');
-            $table->unsignedInteger('userUpd');
+            $table->unsignedInteger('userUpd')->default(0);
             $table->date('dateUpd')->default('0000-00-00');
             $table->dateTime('datetimeUpd')->default('0000-00-00 00:00:00');
         });
@@ -220,10 +280,10 @@ class CreateSecurityTables extends Migration
             $table->unsignedInteger('userId');
             $table->unsignedInteger('roleId');
             $table->unsignedTinyInteger('status')->default(1);
-            $table->unsignedInteger('userIns');
+            $table->unsignedInteger('userIns')->default(0);
             $table->date('dateIns')->default('0000-00-00');
             $table->dateTime('datetimeIns')->default('0000-00-00 00:00:00');
-            $table->unsignedInteger('userUpd');
+            $table->unsignedInteger('userUpd')->default(0);
             $table->date('dateUpd')->default('0000-00-00');
             $table->dateTime('datetimeUpd')->default('0000-00-00 00:00:00');
         });
