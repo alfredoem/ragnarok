@@ -63,10 +63,16 @@ class AuthController extends Controller
         if ($validSession->success) {
             $data = $validSession->response->data;
             $this->userRagnarok->make($data);
+
+            if (session('environment') == 1) {
+                session()->put('dashboard', true);
+            }
+
             return redirect()->to('/');
         }
 
         return $this->getLogout();
+
     }
 
     /**
