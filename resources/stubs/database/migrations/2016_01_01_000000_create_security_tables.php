@@ -83,10 +83,18 @@ class CreateSecurityTables extends Migration
         });
 
         DB::table('SecUsers')->insert([
-            'firstName' => 'Cloud',
-            'lastName'  => 'Strife',
-            'email' => 'admin@ragnarok.com',
-            'password' => bcrypt('admin'),
+            [
+                'firstName' => 'Cloud',
+                'lastName'  => 'Strife',
+                'email' => 'admin@ragnarok.com',
+                'password' => bcrypt('admin'),
+            ],
+            [
+                'firstName' => 'Yitan',
+                'lastName'  => 'Tribal',
+                'email' => 'admin@security.com',
+                'password' => bcrypt('admin'),
+            ]
         ]);
     }
 
@@ -123,6 +131,14 @@ class CreateSecurityTables extends Migration
                 'type' => 1,
                 'logo' => 'meteor-logo.png',
                 'url' => 'http://172.16.11.237/admin-application/public',
+                'status' => 1
+            ],
+            [
+                'name' => 'Security Backend',
+                'description' => 'Lorem ipsum dolor sit amet',
+                'type' => 1,
+                'logo' => 'meteor-logo.png',
+                'url' => 'http://local.admin.security.com',
                 'status' => 1
             ]
         ]);

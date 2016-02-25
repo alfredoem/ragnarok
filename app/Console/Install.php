@@ -22,17 +22,22 @@ class Install extends Command
 
     public function handle()
     {
-        $this->installKernel();
         $this->installMigrations();
         $this->installMiddleware();
         $this->updateAuthConfig();
-        $this->installRoutes();
 
-        // here copy migrations
-        $this->comment('**********************************************');
-        $this->comment('****************Ragnarok**********************');
-        $this->comment('**********************************************');
+        $this->comment('**********************************************************');
+        $this->comment('***********************Ragnarok***************************');
+        $this->comment('**********************************************************');
         $this->comment('');
+
+        if ($this->confirm('Would you like install the ragnarok routes file?', 'yes')) {
+            $this->installRoutes();
+        }
+
+        if ($this->confirm('Would you like install the ragnarok kernel file?', 'yes')) {
+            $this->installKernel();
+        }
 
         if ($this->option('force') || $this->confirm('Would you like to run your database migrations (make sure you have a database created)?', 'yes')) {
             (new Process('php artisan migrate', base_path()))->setTimeout(null)->run();
