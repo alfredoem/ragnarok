@@ -60,13 +60,16 @@ class RagnarokApiController extends Controller
                 $data->sessionCode = $session->sessionCode;
                 $data->userSessionId = $session->userSessionId;
                 $data->environment = $this->environment;
+                $data->remember_token = $session->user->remember_token;
 
-                $this->responseData = $this->authRagnarok->instance($data);
+                $this->responseData = $data;
                 $this->responseSuccess = true;
             }
 
         }
 
-        return EncryptAes::encrypt(json_encode($this->responseRagnarok->make($this->responseSuccess, $this->responseData)));
+        return EncryptAes::encrypt(json_encode($this->responseRagnarok->make(
+            $this->responseSuccess, $this->responseData
+        )));
     }
 }

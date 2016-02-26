@@ -2,7 +2,7 @@
 
 namespace Alfredoem\Ragnarok\Events;
 
-use Alfredoem\Ragnarok\Soul\AuthRagnarok;
+use Alfredoem\Ragnarok\SecUsers\SecUser;
 use App\Events\Event;
 use Illuminate\Queue\SerializesModels;
 
@@ -15,10 +15,10 @@ class LoginAttemptEvent extends Event
     /**
      * Create a new event instance.
      *
-     * @param  AuthRagnarok  $userRagnarok
+     * @param  SecUser  $userRagnarok
      * @return void
      */
-    public function __construct(AuthRagnarok $userRagnarok)
+    public function __construct(SecUser $userRagnarok)
     {
         $this->userRagnarok = $userRagnarok;
     }

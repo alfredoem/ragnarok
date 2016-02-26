@@ -104,10 +104,10 @@ class CreateSecurityTables extends Migration
             $table->increments('appId');
             $table->string('name', 100);
             $table->text('description');
-            $table->unsignedTinyInteger('type');
+            $table->unsignedTinyInteger('type')->default(1);
             $table->string('logo', '250');
             $table->string('url', '250');
-            $table->unsignedTinyInteger('status');
+            $table->unsignedTinyInteger('status')->default(0);
             $table->unsignedInteger('userIns')->default(0);
             $table->date('dateIns')->default('0000-00-00');
             $table->dateTime('datetimeIns')->default('0000-00-00 00:00:00');
@@ -262,9 +262,9 @@ class CreateSecurityTables extends Migration
     public function secRoleMenus()
     {
         Schema::create('SecRoleMenus', function(Blueprint $table){
-            $table->unsignedInteger('roleId');
-            $table->unsignedInteger('menuId');
-            $table->unsignedTinyInteger('status');
+            $table->unsignedInteger('roleId')->default(0);
+            $table->unsignedInteger('menuId')->default(0);
+            $table->unsignedTinyInteger('status')->default(1);
             $table->unsignedInteger('userIns')->default(0);
             $table->date('dateIns')->default('0000-00-00');
             $table->dateTime('datetimeIns')->default('0000-00-00 00:00:00');

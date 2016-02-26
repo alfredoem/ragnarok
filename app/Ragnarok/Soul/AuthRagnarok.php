@@ -4,7 +4,9 @@ namespace Alfredoem\Ragnarok\Soul;
 
 use Alfredoem\Ragnarok\Environment\EnvironmentInterface;
 use Alfredoem\Ragnarok\Environment\EnvironmentTrait;
+use Alfredoem\Ragnarok\SecUsers\SecUser;
 use Illuminate\Support\Facades\Session;
+
 
 class AuthRagnarok implements EnvironmentInterface
 {
@@ -12,16 +14,7 @@ class AuthRagnarok implements EnvironmentInterface
 
     const ENVIRONMENT_NAME = 'Crona$user';
 
-    public $userId = '';
-    public $email = '';
-    public $firstName = '';
-    public $lastName = '';
-    public $status = '';
-    public $remember_token = '';
-    public $userSessionId = '';
-    public $sessionCode = '';
-    public $ipAddress = '';
-    public $environment = 0;
+    protected $userRagnarok;
 
     /**
      * Get User Session Object attribute
@@ -30,10 +23,10 @@ class AuthRagnarok implements EnvironmentInterface
      */
     public function retrieve($name)
     {
-        $RagnarokUser = Session::get(self::ENVIRONMENT_NAME);
+        $this->userRagnarok = Session::get($this->getName());
 
-        if (property_exists($RagnarokUser, $name)) {
-            return $RagnarokUser->$name;
+        if (property_exists($this->userRagnarok, $name)) {
+            return $this->userRagnarok->$name;
         }
 
         return null;
@@ -41,7 +34,7 @@ class AuthRagnarok implements EnvironmentInterface
 
     /**
      * Get User Session Object
-     * @return \Alfredoem\Ragnarok\Soul\AuthRagnarok
+     * @return \Alfredoem\Ragnarok\SecUsers\SecUser
      */
     public static function user()
     {
@@ -50,13 +43,14 @@ class AuthRagnarok implements EnvironmentInterface
 
     /**
      * Make User Session Object
-     * @return \Alfredoem\Ragnarok\Soul\AuthRagnarok
+     * @return \Alfredoem\Ragnarok\SecUsers\SecUser
      */
     public function make($user)
     {
-        $this->fill($user);
-        Session::put(self::ENVIRONMENT_NAME, $this);
-        return Session::get(self::ENVIRONMENT_NAME);
+        $RagnarokUser = new SecUser();
+        $this->userRagnarok = $RagnarokUser->populate($user);
+        Session::put($this->getName(), $this->userRagnarok);
+        return $this->userRagnarok;
     }
 
     /**
@@ -66,25 +60,8 @@ class AuthRagnarok implements EnvironmentInterface
      */
     public function instance($data)
     {
-        $this->fill($data);
-        return $this;
-    }
-
-    /**
-     * Fill the user attributes
-     * @param $data
-     */
-    public function fill($data)
-    {
-        $this->userId = $data->userId;
-        $this->email = $data->email;
-        $this->firstName = $data->firstName;
-        $this->lastName = $data->lastName;
-        $this->status = $data->status;
-        $this->remember_token = $data->remember_token;
-        $this->userSessionId = $data->userSessionId;
-        $this->sessionCode = $data->sessionCode;
-        $this->ipAddress = $data->ipAddress;
-        $this->environment = $data->environment;
+        $RagnarokUser = new SecUser();
+        $this->userRagnarok = $RagnarokUser->populate($data);
+        return $this->userRagnarok;
     }
 }

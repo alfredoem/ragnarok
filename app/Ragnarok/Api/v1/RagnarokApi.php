@@ -48,7 +48,7 @@ class RagnarokApi
             $auth->environment = Session::get('environment');
 
             // Make ragnarok user
-            $this->userRagnarok ->make($auth);
+            $this->userRagnarok->make($auth);
 
             $this->success = true;
         }
