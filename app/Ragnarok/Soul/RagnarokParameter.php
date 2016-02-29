@@ -23,25 +23,31 @@ class RagnarokParameter implements EnvironmentInterface
 
     /**
      * Get value of a RagnarokParameter attribute
-     * @param $name
+     * @param $name: the name of parameter in the database
+     * @param $force: force to get the parameter value of the database
      * @return mixed
      */
-    public function retrieve($name)
+    public function retrieve($name, $force = false)
     {
         $RagnarokParameters = new self($this->SecParameter);
 
         if (self::check()) {
-
-            $RagnarokParameters = Session::get(self::ENVIRONMENT_NAME);
+            $RagnarokParameters = Session::get($this->getName());
 
             if (property_exists($RagnarokParameters, $name)) {
-                return $RagnarokParameters->$name;
-            }
 
+                if($force) {
+                    $value = $this->SecParameter->wherename($name)->first()->value;
+                    Session::push($this->getName().$name, $value);
+                }
+
+                $value = $RagnarokParameters->$name;
+                return $value;
+            }
         }
 
         $RagnarokParameters->$name = $this->SecParameter->wherename($name)->first()->value;
-        Session::put(self::ENVIRONMENT_NAME, $RagnarokParameters);
+        Session::put($this->getName(), $RagnarokParameters);
         return $RagnarokParameters->$name;
     }
 }

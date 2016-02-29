@@ -57,6 +57,11 @@ class CreateSecurityTables extends Migration
                 'name' => 'MAX_LOGIN_ATTEMPTS',
                 'description' => 'The maximum number of login attempts for delaying further attempts',
                 'value'       => '5'
+            ],
+            [
+                'name' => 'CONNECTION_TO_SECURITY',
+                'description' => 'The connection mode to the security backend',
+                'value'       => '5'
             ]
         ]);
     }

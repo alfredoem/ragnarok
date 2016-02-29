@@ -80,9 +80,10 @@ class AuthController extends Controller
      */
     public function getLogin()
     {
-        $serverUrl =  $this->paramRagnarok->retrieve(SecParameter::SERVER_SECURITY_URL);
+        $connectionTo =  $this->paramRagnarok->retrieve(SecParameter::CONNECTION_TO_SECURITY, true);
 
-        if ($serverUrl != url('/')) {
+        if ($connectionTo) {
+            $serverUrl =  $this->paramRagnarok->retrieve(SecParameter::SERVER_SECURITY_URL);
 
             if ($this->serviceRagnarok->checkConnection()) {
                 return redirect()->to($serverUrl);
