@@ -6,7 +6,10 @@ use Illuminate\Support\Facades\Session;
 
 trait EnvironmentTrait
 {
-
+    /**
+     * Get the name for the session
+     * @return string
+     */
     public function getName()
     {
         return self::ENVIRONMENT_NAME;
